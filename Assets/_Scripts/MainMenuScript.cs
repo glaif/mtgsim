@@ -28,16 +28,19 @@ public class MainMenuScript : MonoBehaviour {
         }
         MyRegistry.Register(mmgo.gameObject);
         mmgo.SetActive(false);
-        dsgo = MyRegistry.Find("DeckSelectMenu");
-        if (dsgo == null) {
-            Debug.Log("Null GameObject reference for DeckSelectMenu");
-            Application.Quit();
-        }
+        // dsgo = MyRegistry.Find("DeckSelectMenu");
+        // if (dsgo == null) {
+        //     Debug.Log("Null GameObject reference for DeckSelectMenu");
+        //     Application.Quit();
+        // }
     }
 
     void Update() {
         bool down = Input.GetButtonDown("ShowMainMenu");
-
+        if (dsgo == null) {
+            Debug.Log("Null GameObject reference for DeckSelectMenu");
+            dsgo = MyRegistry.Find("DeckSelectMenu");
+        }
         if (down) {
             dsgo.SetActive(false);
             if (mmgo.activeSelf == true) {
