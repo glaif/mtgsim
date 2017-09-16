@@ -37,6 +37,10 @@ public class DSMenuScript : MonoBehaviour {
         string deckName = ddText.text;
         playerGOsc.PrepStartGame(deckName);
 
+        // Start game state machine
+        MainGameScript mainGameSC = GameObject.Find("Battleground").GetComponent<MainGameScript>();
+        mainGameSC.UpdateGameState(MainGameScript.GameState.DEAL);
+
         dsgo.SetActive(false);
     }
 
