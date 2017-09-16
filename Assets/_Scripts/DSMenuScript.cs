@@ -35,9 +35,8 @@ public class DSMenuScript : MonoBehaviour {
         }
 
         string deckName = ddText.text;
-        MTGDeck deck = new MTGDeck(deckName);
-        playerGOsc.Deck = deck;
-        playerGOsc.PrepStartGame();
+        playerGOsc.PrepStartGame(deckName);
+
         dsgo.SetActive(false);
     }
 

@@ -18,5 +18,6 @@ public class MTGCardScript : MonoBehaviour {
 
     private void OnMouseDown() {
         Debug.Log("Clicked on card in " + this.transform.parent.name + " zone.");
+        transform.parent.GetComponent<MTGDeckScript>().OnMouseDown();
     }
 }

@@ -17,15 +17,20 @@ public class MTGDeck {
         TestDeck();
     }
 
-    public void ShuffleDeck() {
-        Debug.Log("MTGDeck::ShuffleDeck called: deck == " + deckFile);
+    public void InitializeDeck() {
+        Debug.Log("MTGDeck::InitializeDeck called: deck == " + deckFile);
+        GameObject.Find("Player/Cards/Deck").GetComponent<MTGDeckScript>().InitializeDeck();
+    }
+
+    public int GetDeckCount() {
+        return deckList.Count;
     }
 
     void TestDeck() {
         Debug.Log("MTGDeck::TestDeck called");
         int count = 0;
         while (count < 60) {
-            deckList.Add(new MTGCard("TestCard", 1, 1, "B", "TES"));
+            deckList.Add(new MTGCardTester("TestCard", 1, 1, "B", "TES"));
             count += 1;
         }
     }

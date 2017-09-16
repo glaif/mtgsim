@@ -4,33 +4,38 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour {
     public MTGDeck Deck { get; set; }
 
-    // TEST code
+    // TEST Code
     public GameObject testCard;
-
 
     void Start () {
         //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
 	}
-	
-    public void PrepStartGame() {
-        // Do all the pre game stuff that needs to happen to get this player ready to start
-        ShuffleDeck();
+
+    void Update() {
+        
     }
 
-    public void ShuffleDeck() {
-        Debug.Log("ShuffleDeck called");
+    public void PrepStartGame(string deckName) {
+        // Do all the pre game stuff that needs to happen to get this player ready to start
+        
+        InitializeDeck(deckName);
+    }
+
+    public void InitializeDeck(string deckName) {
+        Debug.Log("InitializeDeck called");
+
+        Deck = new MTGDeck(deckName);
         if (Deck == null) {
-            Debug.LogError("ShuffleDeck() called with null deck");
+            Debug.LogError("InitializeDeck() called with null deck");
             return;
         }
-        Deck.ShuffleDeck();
+        Deck.InitializeDeck();
 
         // TEST Code
-        
         GameObject deckLocGO = GameObject.Find("Player/Cards/Deck");
         GameObject c = Instantiate(testCard, deckLocGO.transform);
 
-        Texture cardSkin = (Texture)Resources.Load("Cards/1347");
+        Texture cardSkin = (Texture)Resources.Load("Cards/CardBack");
         if (cardSkin == null) {
             Debug.LogError("Error loading card skin");
             return;
@@ -38,6 +43,6 @@ public class PlayerScript : MonoBehaviour {
 
         Material cardMat = new Material(Shader.Find("Unlit/Transparent"));
         cardMat.SetTexture("_MainTex", cardSkin);
-        c.GetComponent<Renderer>().material = cardMat;
+        c.GetComponentInChildren<Renderer>().material = cardMat;
     }
 }

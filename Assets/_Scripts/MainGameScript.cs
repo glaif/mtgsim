@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
-    public GameObject Player { get; set; }
-    public GameObject Opponent { get; set; }
+    public GameObject Player;
+    public GameObject Opponent;
 
     // Use this for initialization
     void Start () {
