@@ -1,16 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-//public class RegisterGO {
-//    void Start() {
-//        MyRegistry.Register(this.gameObject);
-//    }
-
-//    void OnDestroy() {
-//        MyRegistry.Unregister(this.gameObject);
-//    }
-//}
-
 public static class MyRegistry {
         static List<GameObject> register = new List<GameObject>();
 

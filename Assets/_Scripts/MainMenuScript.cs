@@ -16,6 +16,10 @@ public class MainMenuScript : MonoBehaviour {
         dsgo.SetActive(true);
     }
 
+    public void StartNetworkGameClick() {
+        // Will be used when we add the network play capabilities
+    }
+
     public void ImportDeckClick() {
         Debug.Log("ImportDeckClick fired");
     }
@@ -27,12 +31,7 @@ public class MainMenuScript : MonoBehaviour {
             Application.Quit();
         }
         MyRegistry.Register(mmgo.gameObject);
-        mmgo.SetActive(false);
-        // dsgo = MyRegistry.Find("DeckSelectMenu");
-        // if (dsgo == null) {
-        //     Debug.Log("Null GameObject reference for DeckSelectMenu");
-        //     Application.Quit();
-        // }
+        mmgo.SetActive(true);
     }
 
     void Update() {
