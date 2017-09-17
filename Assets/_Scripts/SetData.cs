@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
-public class MTGSetData {
+public class SetData {
 
     public class MTGSet {
         private string Name;
@@ -20,7 +20,7 @@ public class MTGSetData {
 
     private MTGSet[] setList;
 
-    public MTGSetData() {
+    public SetData() {
         // Read set data from JSON file and populate setList array
         string path = "C:\\stuff\\unity3d\\MTG\\MTG\\Assets\\_Imported\\Static Data\\SetList.json";
         if (!File.Exists(path)) {

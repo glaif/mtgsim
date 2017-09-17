@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
-    public MTGDeck Deck { get; set; }
+    public Deck Deck { get; set; }
 
     // TEST Code
     public GameObject testCard;
@@ -24,7 +24,7 @@ public class PlayerScript : MonoBehaviour {
     public void InitializeDeck(string deckName) {
         Debug.Log("InitializeDeck called");
 
-        Deck = new MTGDeck(deckName);
+        Deck = new Deck(deckName);
         if (Deck == null) {
             Debug.LogError("InitializeDeck() called with null deck");
             return;

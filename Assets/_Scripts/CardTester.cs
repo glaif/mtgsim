@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MTGCardTester : MTGCard {
+public class CardTester : Card {
 
-    public MTGCardTester(string name, long id, int cmc, string colorCost, string setCode) 
+    public CardTester(string name, long id, int cmc, string colorCost, string setCode) 
         : base(name, id, cmc, colorCost, setCode) {
 
     }

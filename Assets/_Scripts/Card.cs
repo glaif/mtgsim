@@ -5,14 +5,18 @@
  * Author: smaldone@gmail.com
  */
 
-public abstract class MTGCard {
+using UnityEngine;
+
+public abstract class Card {
+    public GameObject CardPrefab { get; set; }
+
     private string _name;
     private long _id;
     private int _cmc;
     private string _colorCost;
     private string _setCode;
 
-    public MTGCard(string name, long id, int cmc, string colorCost, string setCode) {
+    public Card(string name, long id, int cmc, string colorCost, string setCode) {
         _name = name;
         _id = id;
         _cmc = cmc;

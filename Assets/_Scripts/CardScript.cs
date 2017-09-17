@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MTGCardScript : MonoBehaviour {
+public class CardScript : MonoBehaviour {
 
-    public MTGCard Card { get; set; }
+    public Card Card { get; set; }
 
 	// Use this for initialization
 	void Start () {
@@ -16,8 +16,8 @@ public class MTGCardScript : MonoBehaviour {
 		
 	}
 
-    private void OnMouseDown() {
+    public void OnMouseDown() {
         Debug.Log("Clicked on card in " + this.transform.parent.name + " zone.");
-        transform.parent.GetComponent<MTGDeckScript>().OnMouseDown();
+        this.transform.parent.SendMessage("OnMouseDown", null, SendMessageOptions.DontRequireReceiver);
     }
 }

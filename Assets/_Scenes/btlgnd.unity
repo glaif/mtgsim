@@ -570,6 +570,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 213407713}
+  - component: {fileID: 213407714}
   m_Layer: 0
   m_Name: Hand
   m_TagString: Untagged
@@ -584,12 +585,23 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 213407712}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.1, z: 0}
+  m_LocalPosition: {x: -2.5, y: -1.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1941662023}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &213407714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 213407712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4dc3c602925b649b6320c42c714737, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &267919491
 GameObject:
   m_ObjectHideFlags: 0
@@ -1948,7 +1960,6 @@ GameObject:
   m_Component:
   - component: {fileID: 969959194}
   - component: {fileID: 969959195}
-  - component: {fileID: 969959196}
   m_Layer: 0
   m_Name: Deck
   m_TagString: Untagged
@@ -1981,18 +1992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40cbf16690077d449aadabc7bbe8b41d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!65 &969959196
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 969959193}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  CardPrefab: {fileID: 1658011964562540, guid: 32f3a6293af573149a21d20150ca5439, type: 2}
 --- !u!1 &1011026111
 GameObject:
   m_ObjectHideFlags: 0
