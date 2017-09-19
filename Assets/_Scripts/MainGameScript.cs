@@ -1,32 +1,43 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
     public GameObject Player;
     public GameObject Opponent;
-    private Transition[] transitionArray;
+
+    private GameObject deck;
+    private GameObject puGO;
+    private TransitionData[] transitionArray;
 
     public MainGameScript() {
-        transitionArray = new Transition[] {
-            DealCards,
-            PUntap,
-            PUpkeep,
-            PDraw,
-            PMain,
-            PCombat,
-            PDiscard,
-            OUntap,
-            OUpkeep,
-            ODraw,
-            OMain,
-            OCombat,
-            ODiscard
+        transitionArray = new TransitionData[] {
+            new TransitionData(DealCards, new Dictionary<string, object>() { { "count", 7 }, { "mulligan", true } }),
+            new TransitionData(PReady, null),
+            new TransitionData(PUntap, null),
+            new TransitionData(PUpkeep, null),
+            new TransitionData(PDraw, null),
+            new TransitionData(PMain, null),
+            new TransitionData(PCombat, null),
+            new TransitionData(PDiscard, null),
+            new TransitionData(OReady, null),
+            new TransitionData(OUntap, null),
+            new TransitionData(OUpkeep, null),
+            new TransitionData(ODraw, null),
+            new TransitionData(OMain, null),
+            new TransitionData(OCombat, null),
+            new TransitionData(ODiscard, null)
         };
     }
 
     // Use this for initialization
     void Start() {
+        deck = GameObject.Find("Battleground/Player/Cards/Deck");
+        if (deck == null) {
+            Debug.LogError("Error getting deck GO");
+            return;
+        }
         // Do Photon connect stuff and wait for opponent to join
-
+        puGO = GameObject.FindGameObjectWithTag("PopupModal");
     }
 
     // Update is called once per frame
@@ -45,73 +56,106 @@ public class MainGameScript : MonoBehaviour {
 
         Debug.Log("GameState changed to: " + state);
 
-        GetTransition(state)();
+        TransitionData tData = GetTransition(state);
+        tData.TransFunc(tData.Parms);
 
         return 0;
     }
 
-    private void DealCards() {
+    // Do the deal cards logic - int count=7, bool mulligan=true
+    private void DealCards(Dictionary<string, object> parms) {
         Debug.Log("DealCards firing");
-        // Do the deal cards logic
+        if (deck == null) {
+            Debug.LogError("Error null deck GO");
+            return;
+        }
+
+        if ((bool)parms["mulligan"]) {
+            deck.GetComponent<DeckScript>().DealCards((int)parms["count"]);
+            // Check if the player wants to mulligan
+            PUModalScript puSC = puGO.GetComponent<PUModalScript>();
+            puSC.SetModalMessage("Take a mulligan?", MulliganPUResponse);
+        }
     }
 
-    private void PUntap() {
+    public void MulliganPUResponse(bool response) {
 
+        if (response) {
+            // Reshuffle the hand into the deck
+            // Call dealcards again, with 6 cards
+        } else {
+            Debug.Log("No mulligan chosen.  Setting state to P_READY");
+            //UpdateGameState(GameState.P_READY);
+        }
     }
 
-    private void OUntap() {
-
-    }
-
-    private void PUpkeep() {
-
-    }
-
-    private void OUpkeep() {
-
-    }
-
-    private void PDraw() {
-
-    }
-
-    private void ODraw() {
-
-    }
-
-    private void PMain() {
+    private void PReady(Dictionary<string, object> parms) {
 
     }
 
-    private void OMain() {
+    private void OReady(Dictionary<string, object> parms) {
 
     }
 
-    private void PCombat() {
+    private void PUntap(Dictionary<string, object> parms) {
 
     }
 
-    private void OCombat() {
+    private void OUntap(Dictionary<string, object> parms) {
 
     }
 
-    private void PDiscard() {
+    private void PUpkeep(Dictionary<string, object> parms) {
 
     }
 
-    private void ODiscard() {
+    private void OUpkeep(Dictionary<string, object> parms) {
+
+    }
+
+    private void PDraw(Dictionary<string, object> parms) {
+
+    }
+
+    private void ODraw(Dictionary<string, object> parms) {
+
+    }
+
+    private void PMain(Dictionary<string, object> parms) {
+
+    }
+
+    private void OMain(Dictionary<string, object> parms) {
+
+    }
+
+    private void PCombat(Dictionary<string, object> parms) {
+
+    }
+
+    private void OCombat(Dictionary<string, object> parms) {
+
+    }
+
+    private void PDiscard(Dictionary<string, object> parms) {
+
+    }
+
+    private void ODiscard(Dictionary<string, object> parms) {
 
     }
 
     // State machine code starts here
     public enum GameState {
         DEAL,
+        P_READY,
         P_UNTAP,
         P_UPKEEP,
         P_DRAW,
         P_MAIN,
         P_COMBAT,
         P_DISCARD,
+        O_READY,
         O_UNTAP,
         O_UPKEEP,
         O_DRAW,
@@ -120,18 +164,28 @@ public class MainGameScript : MonoBehaviour {
         O_DISCARD
     };
 
-    private delegate void Transition();
+    private delegate void Transition(Dictionary<string, object> parms);
 
-    private Transition GetTransition(GameState current) {
+    private TransitionData GetTransition(GameState current) {
         return transitionArray[(int)current];
     }
 
-    private Transition GetNextTransition(GameState current) {
+    private TransitionData GetNextTransition(GameState current) {
         GameState cur = current;
         // Check if we need to wrap around to the beginning os states
         if (cur == GameState.O_DISCARD) {
             cur = GameState.P_UNTAP;
         }
         return transitionArray[(int)cur];
+    }
+
+    private class TransitionData {
+        public TransitionData(Transition tf, Dictionary<string, object> p) {
+            TransFunc = tf;
+            Parms = p;
+        }
+
+        public Transition TransFunc { get; set; }
+        public Dictionary<string, object> Parms { get; set; }
     }
 }

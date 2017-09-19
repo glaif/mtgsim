@@ -32,8 +32,13 @@ public class DeckScript : MonoBehaviour {
             string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
     }
 
-    public void DealCards() {
-        DrawFromTopOfDeck(7);
+    public void DealCards(int count) {
+        if (count < 1) {
+            Debug.LogError("Cannot deal less than 1 card");
+            DrawFromTopOfDeck();
+            return;
+        }
+        DrawFromTopOfDeck(count);
     }
 
     public void DrawFromTopOfDeck(int drawCount=1) {
