@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class PUModalScript : MonoBehaviour {
     private GameObject puGO;
     private GameObject puModalTextGO;
+    private PUResponse resFunction;
 
     public delegate void PUResponse(bool response);
 
@@ -26,8 +27,18 @@ public class PUModalScript : MonoBehaviour {
             return;
         }
         puModalTextGO.GetComponent<Text>().text = msg;
+        puGO.SetActive(true);
+        resFunction = resFunc;
+    }
+
+    public void OnAcceptClicked() {
         puGO.SetActive(false);
-        resFunc(true);
+        resFunction(true);
+    }
+
+    public void OnCancelClicked() {
+        puGO.SetActive(false);
+        resFunction(false);
     }
 
 }

@@ -3,13 +3,19 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
     public Deck Deck { get; set; }
+    public Hand Hand { get; set; }
+
+    public GameObject DeckGO;
+    public GameObject HandGO;
 
     // TEST Code
     public GameObject testCard;
 
     void Start () {
         //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
-	}
+        DeckGO = GameObject.Find("Player/Cards/Deck");
+        HandGO = GameObject.Find("Player/Cards/Hand");
+    }
 
     void Update() {
         
@@ -32,8 +38,7 @@ public class PlayerScript : MonoBehaviour {
         Deck.InitializeDeck();
 
         // TEST Code
-        GameObject deckLocGO = GameObject.Find("Player/Cards/Deck");
-        GameObject c = Instantiate(testCard, deckLocGO.transform);
+        GameObject c = Instantiate(testCard, DeckGO.transform);
 
         Texture cardSkin = (Texture)Resources.Load("Cards/CardBack");
         if (cardSkin == null) {

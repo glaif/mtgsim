@@ -5,26 +5,34 @@ using UnityEngine;
 public class DeckScript : MonoBehaviour {
     public GameObject CardPrefab;
 
-    private GameObject player;
+    private GameObject playerGO;
+    private PlayerScript playerSC;
     private Deck deck;
     private GameObject handGO;
 
     public void InitializeDeck() {
-        player = GameObject.Find("Player");
-        if (player == null) {
-            Debug.LogError("MTGDeckScript::Start: Could not find Player GO");
+        playerGO = GameObject.Find("Player");
+        if (playerGO == null) {
+            Debug.LogError("Could not find Player GO");
             return;
         }
 
-        deck = player.GetComponent<PlayerScript>().Deck;
-        if (deck == null) {
-            Debug.LogError("MTGDeckScript::Start: Could not find Deck");
+        playerSC = playerGO.GetComponent<PlayerScript>();
+        if (playerSC == null) {
+            Debug.LogError("Could not find Player script object");
             return;
         }
+
+        deck = playerSC.Deck;
+        if (deck == null) {
+            Debug.LogError("Could not find Deck");
+            return;
+        }
+        deck.Shuffle();
 
         handGO = GameObject.Find("Player/Cards/Hand");
         if (handGO == null) {
-            Debug.LogError("MTGDeckScript::Start: Could not find Hand GO");
+            Debug.LogError("Could not find Hand GO");
             return;
         }
 
@@ -63,6 +71,13 @@ public class DeckScript : MonoBehaviour {
         }
 
         handGO.GetComponent<HandScript>().AddCardsToHand(cardsDrawn);
+
+        gameObject.GetComponentInChildren<TextMesh>().text =
+            string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
+    }
+
+    public void ReplaceCardOnDeck(Card c) {
+        deck.ReplaceCard(c);
 
         gameObject.GetComponentInChildren<TextMesh>().text =
             string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());

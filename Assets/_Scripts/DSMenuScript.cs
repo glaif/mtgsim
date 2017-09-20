@@ -39,9 +39,8 @@ public class DSMenuScript : MonoBehaviour {
 
         // Start game state machine
         MainGameScript mainGameSC = GameObject.Find("Battleground").GetComponent<MainGameScript>();
-        mainGameSC.UpdateGameState(MainGameScript.GameState.DEAL);
-
         dsgo.SetActive(false);
+        mainGameSC.UpdateGameState(MainGameScript.GameState.DEAL, null);
     }
 
     public void CancelClick() {

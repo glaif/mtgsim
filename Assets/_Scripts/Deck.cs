@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 public class Deck {
@@ -36,6 +37,25 @@ public class Deck {
             deckList.RemoveAt(deckList.Count - 1);
         }
         return retCards;
+    }
+
+    public void ReplaceCard(Card c) {
+        deckList.Add(c);
+    }
+
+    private static System.Random rng = new System.Random();
+
+    public void Shuffle() {
+        int n = deckList.Count;
+        Card value;
+
+        while (n > 1) {
+            n--;
+            int k = rng.Next(n + 1);
+            value = deckList[k];
+            deckList[k] = deckList[n];
+            deckList[n] = value;
+        }
     }
 
     void TestDeck() {

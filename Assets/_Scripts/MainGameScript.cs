@@ -37,7 +37,10 @@ public class MainGameScript : MonoBehaviour {
             return;
         }
         // Do Photon connect stuff and wait for opponent to join
-        puGO = GameObject.FindGameObjectWithTag("PopupModal");
+        puGO = MyRegistry.Find("PopupModal");
+        if (puGO == null) {
+            Debug.LogError("Error getting Popup Modal GO");
+        }
     }
 
     // Update is called once per frame
@@ -50,15 +53,18 @@ public class MainGameScript : MonoBehaviour {
 
     }
 
-    public int UpdateGameState(GameState state) {
+    public int UpdateGameState(GameState state, Dictionary<string, object> newParms) {
         // Turns: untap, upkeep, draw, main, combat, main, discard
         // Adjusts game state and synchronizes with remote player state machine
 
         Debug.Log("GameState changed to: " + state);
 
-        TransitionData tData = GetTransition(state);
-        tData.TransFunc(tData.Parms);
-
+        TransitionData transData = GetTransition(state);
+        if (newParms == null) {
+            transData.TransFunc(transData.Parms);
+        } else {
+            transData.TransFunc(newParms);
+        }
         return 0;
     }
 
@@ -71,6 +77,7 @@ public class MainGameScript : MonoBehaviour {
         }
 
         if ((bool)parms["mulligan"]) {
+            puGO.SetActive(true);
             deck.GetComponent<DeckScript>().DealCards((int)parms["count"]);
             // Check if the player wants to mulligan
             PUModalScript puSC = puGO.GetComponent<PUModalScript>();
@@ -81,16 +88,32 @@ public class MainGameScript : MonoBehaviour {
     public void MulliganPUResponse(bool response) {
 
         if (response) {
+            Debug.Log("Mulligan chosen.  Resetting state to P_DEAL");
+            GameObject handGO = GameObject.Find("Player/Cards/Hand");
+            if (handGO == null) {
+                Debug.LogError("Error gatting hand GO");
+                return;
+            }
+
+            HandScript handSC = handGO.GetComponent<HandScript>();
+            if (handGO == null) {
+                Debug.LogError("Error gatting hand script object");
+                return;
+            }
+
+            int curCount = handSC.CardCount();
             // Reshuffle the hand into the deck
-            // Call dealcards again, with 6 cards
+            handSC.RecycleHand();
+            // Call dealcards again, with 1 less card in hand
+            UpdateGameState(GameState.DEAL, new Dictionary<string, object>() { { "count", curCount - 1 }, { "mulligan", true } });
         } else {
             Debug.Log("No mulligan chosen.  Setting state to P_READY");
-            //UpdateGameState(GameState.P_READY);
+            UpdateGameState(GameState.P_READY, null);
         }
     }
 
     private void PReady(Dictionary<string, object> parms) {
-
+        Debug.Log("PReady firing");
     }
 
     private void OReady(Dictionary<string, object> parms) {
