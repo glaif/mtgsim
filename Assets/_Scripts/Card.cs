@@ -8,7 +8,7 @@
 using UnityEngine;
 
 public abstract class Card {
-    public GameObject CardPrefab { get; set; }
+    public GameObject CardPrefabInst { get; set; }  // Stores refeence to card prefab instance for this card
 
     private string _name;
     private long _id;

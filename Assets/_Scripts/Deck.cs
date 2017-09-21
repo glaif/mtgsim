@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections.Generic;
 
 public class Deck {
-    string deckFile;
-    List<Card> deckList = new List<Card>();
+    private string deckFile;
+    private List<Card> deckList = new List<Card>();
     
 
     public Deck(string deck_file) {

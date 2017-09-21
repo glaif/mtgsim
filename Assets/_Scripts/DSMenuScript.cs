@@ -1,23 +1,22 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
 public class DSMenuScript : MonoBehaviour {
-    private GameObject dsgo;
+    private GameObject dsGO;
 
     void Start() {
-        dsgo = GameObject.FindGameObjectWithTag("DeckSelectMenu");
-        if (dsgo == null) {
+        dsGO = GameObject.FindGameObjectWithTag("DeckSelectMenu");
+        if (dsGO == null) {
             Debug.Log("Null GameObject reference for DeckSelectMenu");
             Application.Quit();
         }
-        MyRegistry.Register(dsgo.gameObject);
-        dsgo.SetActive(false);
+        UIGORegistry.Register(dsGO.gameObject);
+        dsGO.SetActive(false);
     }
 	
     public void SelectDeckClick() {
-        PlayerScript playerGOsc = GameObject.Find("Player").GetComponent<PlayerScript>();
-        if (playerGOsc == null) {
+        PlayerScript playerSC = GameObject.Find("Player").GetComponent<PlayerScript>();
+        if (playerSC == null) {
             Debug.LogError("Unable to find Player GO");
             return;
         }
@@ -35,15 +34,15 @@ public class DSMenuScript : MonoBehaviour {
         }
 
         string deckName = ddText.text;
-        playerGOsc.PrepStartGame(deckName);
+        playerSC.PrepStartGame(deckName);
 
         // Start game state machine
         MainGameScript mainGameSC = GameObject.Find("Battleground").GetComponent<MainGameScript>();
-        dsgo.SetActive(false);
+        dsGO.SetActive(false);
         mainGameSC.UpdateGameState(MainGameScript.GameState.DEAL, null);
     }
 
     public void CancelClick() {
-        dsgo.SetActive(false);
+        dsGO.SetActive(false);
     }
 }

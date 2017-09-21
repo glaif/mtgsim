@@ -14,7 +14,7 @@ public class PUModalScript : MonoBehaviour {
             Debug.Log("Null GameObject reference for PopupModal");
             Application.Quit();
         }
-        MyRegistry.Register(puGO.gameObject);
+        UIGORegistry.Register(puGO.gameObject);
 
         puModalTextGO = puGO.transform.Find("PUPanel/PUText").gameObject;
 

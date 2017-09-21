@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
     public Deck Deck { get; set; }
-    public Hand Hand { get; set; }
+    public GameObject DeckGO { get; private set; }
+    public DeckScript DeckSC { get; private set; }
 
-    public GameObject DeckGO;
-    public GameObject HandGO;
+    public Hand Hand { get; set; }
+    public GameObject HandGO { get; private set; }
+    public HandScript HandSC { get; private set; }
 
     // TEST Code
     public GameObject testCard;
@@ -14,7 +15,10 @@ public class PlayerScript : MonoBehaviour {
     void Start () {
         //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
         DeckGO = GameObject.Find("Player/Cards/Deck");
+        DeckSC = DeckGO.GetComponent<DeckScript>();
+
         HandGO = GameObject.Find("Player/Cards/Hand");
+        HandSC = HandGO.GetComponent<HandScript>();
     }
 
     void Update() {
@@ -23,17 +27,16 @@ public class PlayerScript : MonoBehaviour {
 
     public void PrepStartGame(string deckName) {
         // Do all the pre game stuff that needs to happen to get this player ready to start
-        
         InitializeDeck(deckName);
+        InitializeHand();
     }
 
-    public void InitializeDeck(string deckName) {
+    private void InitializeDeck(string deckName) {
         Debug.Log("InitializeDeck called");
 
         Deck = new Deck(deckName);
         if (Deck == null) {
             Debug.LogError("InitializeDeck() called with null deck");
-            return;
         }
         Deck.InitializeDeck();
 
@@ -49,5 +52,10 @@ public class PlayerScript : MonoBehaviour {
         Material cardMat = new Material(Shader.Find("Unlit/Transparent"));
         cardMat.SetTexture("_MainTex", cardSkin);
         c.GetComponentInChildren<Renderer>().material = cardMat;
+    }
+
+    private void InitializeHand() {
+        Hand = new Hand();
+        HandSC.InitializeHand();
     }
 }

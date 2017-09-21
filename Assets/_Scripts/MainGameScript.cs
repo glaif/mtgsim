@@ -2,48 +2,34 @@
 using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
-    public GameObject Player;
-    public GameObject Opponent;
-
-    private GameObject deck;
-    private GameObject puGO;
-    private TransitionData[] transitionArray;
+    private PlayerScript playerSC;
+    private GameObject puGO;  // Reference to reusable modal popup window GO
+    private PUModalScript puSC;  // Reference to reusable modal popup window script
 
     public MainGameScript() {
-        transitionArray = new TransitionData[] {
-            new TransitionData(DealCards, new Dictionary<string, object>() { { "count", 7 }, { "mulligan", true } }),
-            new TransitionData(PReady, null),
-            new TransitionData(PUntap, null),
-            new TransitionData(PUpkeep, null),
-            new TransitionData(PDraw, null),
-            new TransitionData(PMain, null),
-            new TransitionData(PCombat, null),
-            new TransitionData(PDiscard, null),
-            new TransitionData(OReady, null),
-            new TransitionData(OUntap, null),
-            new TransitionData(OUpkeep, null),
-            new TransitionData(ODraw, null),
-            new TransitionData(OMain, null),
-            new TransitionData(OCombat, null),
-            new TransitionData(ODiscard, null)
-        };
+        InitializeTransitionArray();
     }
 
-    // Use this for initialization
     void Start() {
-        deck = GameObject.Find("Battleground/Player/Cards/Deck");
-        if (deck == null) {
-            Debug.LogError("Error getting deck GO");
-            return;
+        GameObject player = GameObject.Find("Battleground/Player");
+        if (player == null) {
+            Debug.LogError("Error getting player GO");
         }
-        // Do Photon connect stuff and wait for opponent to join
-        puGO = MyRegistry.Find("PopupModal");
+        playerSC = player.GetComponent<PlayerScript>();
+
+        puGO = UIGORegistry.Find("PopupModal");
         if (puGO == null) {
             Debug.LogError("Error getting Popup Modal GO");
         }
+
+        puSC = puGO.GetComponent<PUModalScript>();
+        if (puSC == null) {
+            Debug.LogError("Error getting Popup Modal script component");
+        }
+
+        // Do Photon connect stuff and wait for opponent to join
     }
 
-    // Update is called once per frame
     void Update() {
         // Once opponent connects roll d20
         // Winner hosts state machine for the game
@@ -71,49 +57,49 @@ public class MainGameScript : MonoBehaviour {
     // Do the deal cards logic - int count=7, bool mulligan=true
     private void DealCards(Dictionary<string, object> parms) {
         Debug.Log("DealCards firing");
-        if (deck == null) {
-            Debug.LogError("Error null deck GO");
+        if (playerSC == null) {
+            Debug.LogError("Error null player script object");
             return;
         }
+        GameObject deckGO = playerSC.DeckGO;
 
         if ((bool)parms["mulligan"]) {
             puGO.SetActive(true);
-            deck.GetComponent<DeckScript>().DealCards((int)parms["count"]);
+
+            deckGO.GetComponent<DeckScript>().DealCards((int)parms["count"]);
+            
             // Check if the player wants to mulligan
-            PUModalScript puSC = puGO.GetComponent<PUModalScript>();
             puSC.SetModalMessage("Take a mulligan?", MulliganPUResponse);
         }
     }
 
     public void MulliganPUResponse(bool response) {
-
         if (response) {
             Debug.Log("Mulligan chosen.  Resetting state to P_DEAL");
-            GameObject handGO = GameObject.Find("Player/Cards/Hand");
-            if (handGO == null) {
-                Debug.LogError("Error gatting hand GO");
-                return;
-            }
 
-            HandScript handSC = handGO.GetComponent<HandScript>();
-            if (handGO == null) {
+            HandScript handSC = playerSC.HandSC;
+            if (handSC == null) {
                 Debug.LogError("Error gatting hand script object");
                 return;
             }
 
             int curCount = handSC.CardCount();
-            // Reshuffle the hand into the deck
+            // Reshuffle the entire hand into the deck
             handSC.RecycleHand();
             // Call dealcards again, with 1 less card in hand
             UpdateGameState(GameState.DEAL, new Dictionary<string, object>() { { "count", curCount - 1 }, { "mulligan", true } });
         } else {
             Debug.Log("No mulligan chosen.  Setting state to P_READY");
+
             UpdateGameState(GameState.P_READY, null);
         }
     }
 
     private void PReady(Dictionary<string, object> parms) {
         Debug.Log("PReady firing");
+        // Wait here for other player(s) to move into ready state
+        // Then move to P_UNTAP or O_UNTAP depending on who goes first
+        UpdateGameState(GameState.P_UNTAP, null);
     }
 
     private void OReady(Dictionary<string, object> parms) {
@@ -121,7 +107,11 @@ public class MainGameScript : MonoBehaviour {
     }
 
     private void PUntap(Dictionary<string, object> parms) {
-
+        Debug.Log("PUntap firing");
+        // Untap all tapped cards
+        // Keep a tapped cards list in the player script object
+        // to track tapped cards
+        // Also need to check each card to make sure it should untap
     }
 
     private void OUntap(Dictionary<string, object> parms) {
@@ -129,7 +119,8 @@ public class MainGameScript : MonoBehaviour {
     }
 
     private void PUpkeep(Dictionary<string, object> parms) {
-
+        Debug.Log("PUpkeep firing");
+        // Check upkeep list for any upkeep requirements
     }
 
     private void OUpkeep(Dictionary<string, object> parms) {
@@ -137,7 +128,7 @@ public class MainGameScript : MonoBehaviour {
     }
 
     private void PDraw(Dictionary<string, object> parms) {
-
+        Debug.Log("PDraw firing");
     }
 
     private void ODraw(Dictionary<string, object> parms) {
@@ -188,6 +179,28 @@ public class MainGameScript : MonoBehaviour {
     };
 
     private delegate void Transition(Dictionary<string, object> parms);
+
+    private TransitionData[] transitionArray;
+
+    private void InitializeTransitionArray() {
+        transitionArray = new TransitionData[] {
+            new TransitionData(DealCards, new Dictionary<string, object>() { { "count", 7 }, { "mulligan", true } }),
+            new TransitionData(PReady, null),
+            new TransitionData(PUntap, null),
+            new TransitionData(PUpkeep, null),
+            new TransitionData(PDraw, null),
+            new TransitionData(PMain, null),
+            new TransitionData(PCombat, null),
+            new TransitionData(PDiscard, null),
+            new TransitionData(OReady, null),
+            new TransitionData(OUntap, null),
+            new TransitionData(OUpkeep, null),
+            new TransitionData(ODraw, null),
+            new TransitionData(OMain, null),
+            new TransitionData(OCombat, null),
+            new TransitionData(ODiscard, null)
+        };
+    }
 
     private TransitionData GetTransition(GameState current) {
         return transitionArray[(int)current];

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public static class MyRegistry {
+public static class UIGORegistry {
         static List<GameObject> register = new List<GameObject>();
 
         public static void Register(GameObject go) {

@@ -1,17 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class DeckScript : MonoBehaviour {
-    public GameObject CardPrefab;
+    public GameObject CardPrefab;  // Stores reference to the Card Prefab
 
-    private GameObject playerGO;
+    //private GameObject playerGO;
     private PlayerScript playerSC;
     private Deck deck;
     private GameObject handGO;
 
     public void InitializeDeck() {
-        playerGO = GameObject.Find("Player");
+        GameObject playerGO = GameObject.Find("Player");
         if (playerGO == null) {
             Debug.LogError("Could not find Player GO");
             return;
@@ -58,7 +57,7 @@ public class DeckScript : MonoBehaviour {
         
         for (int i = 0; i < cardsDrawn.Count; i++) {
             GameObject c = Instantiate(CardPrefab, handGO.transform);
-            cardsDrawn[i].CardPrefab = c;
+            cardsDrawn[i].CardPrefabInst = c;
 
             Texture cardSkin = (Texture)Resources.Load("Cards/1347");
             if (cardSkin == null) {

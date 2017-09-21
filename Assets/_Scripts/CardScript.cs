@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CardScript : MonoBehaviour {
 
     public Card Card { get; set; }
-    bool shiftOn;
-    bool enlargedCard;
+
+    private bool shiftOn;
+    private bool enlargedCard;
 
     void Start () {
         shiftOn = false;
