@@ -50,7 +50,7 @@ public class DeckScript : MonoBehaviour {
 
     public void DrawFromTopOfDeck(int drawCount=1) {
         // Draw drawCount many cards from top of deck
-        Debug.Log("darwCount = " + drawCount);
+        Debug.Log("drawCount = " + drawCount);
         Debug.Log("DrawFromTopOfDeck called to draw " + drawCount + " card" + (drawCount > 1 ? "s":""));
 
         List<Card> cardsDrawn = deck.GetNextNCards(drawCount);
@@ -58,6 +58,7 @@ public class DeckScript : MonoBehaviour {
         for (int i = 0; i < cardsDrawn.Count; i++) {
             GameObject c = Instantiate(CardPrefab, handGO.transform);
             cardsDrawn[i].CardPrefabInst = c;
+            c.GetComponent<CardScript>().Card = cardsDrawn[i];
 
             Texture cardSkin = (Texture)Resources.Load("Cards/1347");
             if (cardSkin == null) {

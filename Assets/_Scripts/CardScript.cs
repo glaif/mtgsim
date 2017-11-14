@@ -6,12 +6,10 @@ public class CardScript : MonoBehaviour {
 
     private bool shiftOn;
     private bool enlargedCard;
-    private bool tapped;
 
     void Start () {
         shiftOn = false;
         enlargedCard = false;
-        tapped = false;
     }
 	
 	void Update () {
@@ -27,12 +25,11 @@ public class CardScript : MonoBehaviour {
             Debug.Log("Clicked on card in " + this.transform.parent.name + " zone.");
             this.transform.parent.SendMessage("OnMouseDown", null, SendMessageOptions.DontRequireReceiver);
         }
-        if (tapped == false) {
+
+        if ((Card.IsTappable() == true) && (Card.IsTapped() == false)) {
             TapCard();
-            tapped = true;
-        } else {
+        } else if ((Card.IsTappable()) && (Card.IsTapped() == true)) {
             UntapCard();
-            tapped = false;
         }
     }
 
@@ -58,9 +55,11 @@ public class CardScript : MonoBehaviour {
 
     private void TapCard() {
         this.transform.rotation = Quaternion.Euler(0, 0, 90);
+        Card.Tap();
     }
 
     private void UntapCard() {
         this.transform.rotation = Quaternion.Euler(0, 0, 0);
+        Card.UnTap();
     }
 }

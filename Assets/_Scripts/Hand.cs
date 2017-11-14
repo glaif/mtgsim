@@ -5,6 +5,7 @@ public class Hand {
 
     public void AddCardToHand(Card card) {
         handList.Add(card);
+        card.SetTappable(true);
     }
 
     public Card RemoveCardFromHand(int index=0) {

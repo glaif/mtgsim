@@ -15,6 +15,9 @@ public class Deck {
     void LoadDeck() {
         Debug.Log("MTGDeck::LoadDeck called: deckFile == " + deckFile);
         TestDeck();
+        foreach (Card c in deckList) {
+            c.SetTappable(false);
+        }
     }
 
     public void InitializeDeck() {

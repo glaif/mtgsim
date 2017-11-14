@@ -42,6 +42,9 @@ public class PlayerScript : MonoBehaviour {
 
         // TEST Code
         GameObject c = Instantiate(testCard, DeckGO.transform);
+        Card dtc = new DeckTopCard();
+        dtc.SetTappable(false);
+        c.GetComponent<CardScript>().Card = dtc;
 
         Texture cardSkin = (Texture)Resources.Load("Cards/CardBack");
         if (cardSkin == null) {
