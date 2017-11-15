@@ -8,48 +8,36 @@
 using UnityEngine;
 
 public abstract class Card {
+
     public GameObject CardPrefabInst { get; set; }  // Stores refeence to card prefab instance for this card
 
-    private string _name;
-    private long _id;
-    private int _cmc;
-    private string _colorCost;
-    private string _setCode;
+    public string Name { get; private set; }
+    public long Id { get; private set; }
+    public int CMC { get; private set; }
+    public string ColorCost { get; private set; }
+    public string SetCode { get; private set; }
+
     private bool _tappable;
+    private bool _zoneTappable;
     private bool _tapped;
 
     public Card(string name, long id, int cmc, string colorCost, string setCode) {
-        _name = name;
-        _id = id;
-        _cmc = cmc;
-        _colorCost = colorCost;
-        _setCode = setCode;
+        Name = name;
+        Id = id;
+        CMC = cmc;
+        ColorCost = colorCost;
+        SetCode = setCode;
         _tappable = true;
         _tapped = false;
-    }
-
-    public string GetName() {
-        return _name;
-    }
-
-    public long GetID() {
-        return _id;
-    }
-
-    public int GetCMC() {
-        return _cmc;
-    }
-
-    public string GetColorCost() {
-        return _colorCost;
-    }
-
-    public string GetSetCode() {
-        return _setCode;
+        _zoneTappable = true;
     }
 
     public void SetTappable(bool tappable) {
         _tappable = tappable;
+    }
+
+    public void SetZoneTappable(bool tappable) {
+        _zoneTappable = tappable;
     }
 
     public bool IsTappable() {
@@ -57,7 +45,7 @@ public abstract class Card {
          * This is the top-level to override
          * decorator bahavior (e.g., if card is in deck)
          */
-        return _tappable;
+        return _tappable && _zoneTappable;
     }
 
     public void Tap() {

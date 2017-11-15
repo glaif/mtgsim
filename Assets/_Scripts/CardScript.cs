@@ -6,6 +6,7 @@ public class CardScript : MonoBehaviour {
 
     private bool shiftOn;
     private bool enlargedCard;
+    private Quaternion newRotation;
 
     void Start () {
         shiftOn = false;
@@ -13,6 +14,10 @@ public class CardScript : MonoBehaviour {
     }
 	
 	void Update () {
+        if (this.transform.rotation != newRotation) {
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, newRotation, 0.1f);
+        }
+
         if (Input.GetKey(KeyCode.LeftShift)) {
             shiftOn = true;
         } else {
@@ -35,11 +40,11 @@ public class CardScript : MonoBehaviour {
 
     public void OnMouseOver() {
         if (shiftOn && enlargedCard == false) {
-            this.transform.localScale = new Vector3(4f, 4f, 0f);
-            this.transform.localPosition = new Vector3(this.transform.localPosition.x, 1.5f, -1f);
+            this.transform.localScale = new Vector3(this.transform.localScale.x * 4f, this.transform.localScale.y * 4f, 1f);
+            this.transform.localPosition = new Vector3(this.transform.localPosition.x, 3f, -1f);
             enlargedCard = true;
         } else if (shiftOn == false && enlargedCard == true) {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            this.transform.localScale = new Vector3(this.transform.localScale.x / 4f, this.transform.localScale.y / 4f, 1f);
             this.transform.localPosition = new Vector3(this.transform.localPosition.x, 0f, 0);
             enlargedCard = false;
         }
@@ -47,19 +52,21 @@ public class CardScript : MonoBehaviour {
 
     public void OnMouseExit() {
         if (enlargedCard == true) {
-            this.transform.localScale = new Vector3(1, 1, 1);
+            this.transform.localScale = new Vector3(this.transform.localScale.x / 4f, this.transform.localScale.y / 4f, 1f);
             this.transform.localPosition = new Vector3(this.transform.localPosition.x, 0f, 0);
             enlargedCard = false;
         }
     }
 
     private void TapCard() {
-        this.transform.rotation = Quaternion.Euler(0, 0, 90);
+        //this.transform.rotation = Quaternion.Euler(0, 0, 90);
+        newRotation = Quaternion.Euler(0, 0, 90);
         Card.Tap();
     }
 
     private void UntapCard() {
-        this.transform.rotation = Quaternion.Euler(0, 0, 0);
+        newRotation = Quaternion.Euler(0, 0, 0);
+        //this.transform.rotation = Quaternion.Euler(0, 0, 0);
         Card.UnTap();
     }
 }
