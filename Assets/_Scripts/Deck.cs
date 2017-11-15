@@ -14,15 +14,16 @@ public class Deck {
 
     void LoadDeck() {
         Debug.Log("MTGDeck::LoadDeck called: deckFile == " + deckFile);
+        // Need to read deck from external file
+        // Then instantiate and add cards to deck
+        // Instantiate prefab for a card when it 
+        // is drawn from deck, though
+        
+        //TEST CODE
         TestDeck();
         foreach (Card c in deckList) {
-            c.SetTappable(false);
+            c.SetZoneTappable(false);
         }
-    }
-
-    public void InitializeDeck() {
-        Debug.Log("MTGDeck::InitializeDeck called: deck == " + deckFile);
-        GameObject.Find("Player/Cards/Deck").GetComponent<DeckScript>().InitializeDeck();
     }
 
     public int GetDeckCount() {

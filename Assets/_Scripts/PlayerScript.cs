@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class PlayerScript : MonoBehaviour {
-    public Deck Deck { get; set; }
+    private Deck Deck { get; set; }
     public GameObject DeckGO { get; private set; }
     public DeckScript DeckSC { get; private set; }
 
@@ -10,7 +10,7 @@ public class PlayerScript : MonoBehaviour {
     public HandScript HandSC { get; private set; }
 
     // TEST Code
-    public GameObject testCard;
+    public GameObject deckTopCard;
 
     void Start () {
         //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
@@ -38,12 +38,11 @@ public class PlayerScript : MonoBehaviour {
         if (Deck == null) {
             Debug.LogError("InitializeDeck() called with null deck");
         }
-        Deck.InitializeDeck();
+        DeckSC.InitializeDeck(Deck);
 
-        // TEST Code
-        GameObject c = Instantiate(testCard, DeckGO.transform);
+        GameObject c = Instantiate(deckTopCard, DeckGO.transform);
         Card dtc = new DeckTopCard();
-        dtc.SetTappable(false);
+        dtc.SetZoneTappable(false);
         c.GetComponent<CardScript>().Card = dtc;
 
         Texture cardSkin = (Texture)Resources.Load("Cards/CardBack");

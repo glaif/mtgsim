@@ -4,36 +4,24 @@ using UnityEngine;
 public class DeckScript : MonoBehaviour {
     public GameObject CardPrefab;  // Stores reference to the Card Prefab
 
-    //private GameObject playerGO;
-    private PlayerScript playerSC;
-    private Deck deck;
+    private Deck _deck;
     private GameObject handGO;
 
-    public void InitializeDeck() {
-        GameObject playerGO = GameObject.Find("Player");
-        if (playerGO == null) {
-            Debug.LogError("Could not find Player GO");
-            return;
-        }
-
-        playerSC = playerGO.GetComponent<PlayerScript>();
-        if (playerSC == null) {
-            Debug.LogError("Could not find Player script object");
-            return;
-        }
-
-        deck = playerSC.Deck;
+    public void InitializeDeck(Deck deck) {
         if (deck == null) {
-            Debug.LogError("Could not find Deck");
+            Debug.LogError("Null Deck passed into InitializaDeck()");
             return;
         }
-        deck.Shuffle();
 
         handGO = GameObject.Find("Player/Cards/Hand");
         if (handGO == null) {
             Debug.LogError("Could not find Hand GO");
             return;
         }
+
+        _deck = deck;
+
+        _deck.Shuffle();
 
         gameObject.GetComponentInChildren<TextMesh>().text =
             string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
@@ -53,7 +41,7 @@ public class DeckScript : MonoBehaviour {
         Debug.Log("drawCount = " + drawCount);
         Debug.Log("DrawFromTopOfDeck called to draw " + drawCount + " card" + (drawCount > 1 ? "s":""));
 
-        List<Card> cardsDrawn = deck.GetNextNCards(drawCount);
+        List<Card> cardsDrawn = _deck.GetNextNCards(drawCount);
         
         for (int i = 0; i < cardsDrawn.Count; i++) {
             GameObject c = Instantiate(CardPrefab, handGO.transform);
@@ -73,14 +61,14 @@ public class DeckScript : MonoBehaviour {
         handGO.GetComponent<HandScript>().AddCardsToHand(cardsDrawn);
 
         gameObject.GetComponentInChildren<TextMesh>().text =
-            string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
+            string.Format("Cards\nRemaining: {0}", _deck.GetDeckCount());
     }
 
     public void ReplaceCardOnDeck(Card c) {
-        deck.ReplaceCard(c);
+        _deck.ReplaceCard(c);
 
         gameObject.GetComponentInChildren<TextMesh>().text =
-            string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
+            string.Format("Cards\nRemaining: {0}", _deck.GetDeckCount());
     }
 
     public void OnMouseDown() {
