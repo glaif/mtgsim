@@ -3,23 +3,43 @@ using UnityEngine;
 
 public class HandScript : MonoBehaviour {
     private Hand hand;
-    private GameObject playerGO;
-    private PlayerScript playerSC;
 
-    public void InitializeHand() {
-        playerGO = GameObject.Find("Player");
-        if (playerGO == null) {
-            Debug.LogError("Could not find Player GO");
+    private GameObject handGO;
+    private HandScript handSC;
+
+    private GameObject deckGO;
+    private DeckScript deckSC;
+
+    public void InitializeHand(GameObject handGO, Hand hand, GameObject deckGO) {
+        if (deckGO == null) {
+            Debug.LogError("Could not find Deck GO");
+            return;
+        }
+        this.deckGO = deckGO;
+
+        deckSC = deckGO.GetComponent<DeckScript>();
+        if (deckSC == null) {
+            Debug.LogError("Could not find Deck SC");
             return;
         }
 
-        playerSC = playerGO.GetComponent<PlayerScript>();
-        if (playerSC == null) {
-            Debug.LogError("Could not find Player script object");
+        if (handGO == null) {
+            Debug.LogError("Could not find Hand GO");
+            return;
+        }
+        this.handGO = handGO;
+
+        handSC = handGO.GetComponent<HandScript>();
+        if (handSC == null) {
+            Debug.LogError("Could not find Hand SC");
             return;
         }
 
-        hand = playerSC.Hand;
+        if (hand == null) {
+            Debug.LogError("Null Hand passed into InitializaDeck()");
+            return;
+        }
+        this.hand = hand;
     }
 
     public void AddCardsToHand(List<Card> cards) {
@@ -52,7 +72,7 @@ public class HandScript : MonoBehaviour {
                     Destroy(cGO);
                 c.CardPrefabInst = null;
             }
-            playerSC.DeckGO.GetComponent<DeckScript>().ReplaceCardOnDeck(c);
+            deckSC.ReplaceCardOnDeck(c);
         }
         Debug.Log("After recycle, card count: " + hand.CardCount());
     }

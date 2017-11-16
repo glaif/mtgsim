@@ -4,27 +4,70 @@ using UnityEngine;
 public class DeckScript : MonoBehaviour {
     public GameObject CardPrefab;  // Stores reference to the Card Prefab
 
-    private Deck _deck;
-    private GameObject handGO;
+    private Deck deck;
 
-    public void InitializeDeck(Deck deck) {
-        if (deck == null) {
-            Debug.LogError("Null Deck passed into InitializaDeck()");
+    private GameObject handGO;
+    private HandScript handSC;
+
+    private GameObject deckGO;
+    private DeckScript deckSC;
+
+    // TEST Code
+    public GameObject deckTopCard;
+
+    public void InitializeDeck(GameObject deckGO, Deck deck, GameObject handGO) {
+        if (deckGO == null) {
+            Debug.LogError("Could not find Deck GO");
+            return;
+        }
+        this.deckGO = deckGO;
+
+        deckSC = deckGO.GetComponent<DeckScript>();
+        if (deckSC == null) {
+            Debug.LogError("Could not find Deck SC");
             return;
         }
 
-        handGO = GameObject.Find("Player/Cards/Hand");
         if (handGO == null) {
             Debug.LogError("Could not find Hand GO");
             return;
         }
+        this.handGO = handGO;
 
-        _deck = deck;
+        handSC = handGO.GetComponent<HandScript>();
+        if (handSC == null) {
+            Debug.LogError("Could not find Hand SC");
+            return;
+        }
 
-        _deck.Shuffle();
+        if (deck == null) {
+            Debug.LogError("Null Deck passed into InitializaDeck()");
+            return;
+        }
+        this.deck = deck;
+        ShuffleDeck();
+    }
+
+    private void ShuffleDeck() {
+        this.deck.Shuffle();
 
         gameObject.GetComponentInChildren<TextMesh>().text =
             string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
+
+        GameObject c = Instantiate(deckTopCard, deckGO.transform);
+        Card dtc = new DeckTopCard();
+        dtc.SetZoneTappable(false);
+        c.GetComponent<CardScript>().Card = dtc;
+
+        Texture cardSkin = (Texture)Resources.Load("Cards/CardBack");
+        if (cardSkin == null) {
+            Debug.LogError("Error loading card skin");
+            return;
+        }
+
+        Material cardMat = new Material(Shader.Find("Unlit/Transparent"));
+        cardMat.SetTexture("_MainTex", cardSkin);
+        c.GetComponentInChildren<Renderer>().material = cardMat;
     }
 
     public void DealCards(int count) {
@@ -41,7 +84,7 @@ public class DeckScript : MonoBehaviour {
         Debug.Log("drawCount = " + drawCount);
         Debug.Log("DrawFromTopOfDeck called to draw " + drawCount + " card" + (drawCount > 1 ? "s":""));
 
-        List<Card> cardsDrawn = _deck.GetNextNCards(drawCount);
+        List<Card> cardsDrawn = deck.GetNextNCards(drawCount);
         
         for (int i = 0; i < cardsDrawn.Count; i++) {
             GameObject c = Instantiate(CardPrefab, handGO.transform);
@@ -58,17 +101,17 @@ public class DeckScript : MonoBehaviour {
             c.GetComponentInChildren<Renderer>().material = cardMat;
         }
 
-        handGO.GetComponent<HandScript>().AddCardsToHand(cardsDrawn);
+        handSC.AddCardsToHand(cardsDrawn);
 
         gameObject.GetComponentInChildren<TextMesh>().text =
-            string.Format("Cards\nRemaining: {0}", _deck.GetDeckCount());
+            string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
     }
 
     public void ReplaceCardOnDeck(Card c) {
-        _deck.ReplaceCard(c);
+        deck.ReplaceCard(c);
 
         gameObject.GetComponentInChildren<TextMesh>().text =
-            string.Format("Cards\nRemaining: {0}", _deck.GetDeckCount());
+            string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
     }
 
     public void OnMouseDown() {

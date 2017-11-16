@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311947, g: 0.38074005, b: 0.35872722, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311926, g: 0.38074008, b: 0.35872707, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -2446,6 +2446,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CardPrefab: {fileID: 1658011964562540, guid: 32f3a6293af573149a21d20150ca5439, type: 2}
+  deckTopCard: {fileID: 1658011964562540, guid: 32f3a6293af573149a21d20150ca5439,
+    type: 2}
 --- !u!1 &1011026111
 GameObject:
   m_ObjectHideFlags: 0
@@ -2589,8 +2591,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2e04ee95aba235438caa6a02d3d0421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deckTopCard: {fileID: 1658011964562540, guid: 32f3a6293af573149a21d20150ca5439,
-    type: 2}
 --- !u!1 &1342528953
 GameObject:
   m_ObjectHideFlags: 0

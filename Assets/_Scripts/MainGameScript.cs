@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
     private PlayerScript playerSC;
-    private GameObject puGO;  // Reference to reusable modal popup window GO
-    private PUModalScript puSC;  // Reference to reusable modal popup window script
+    private GameObject popupGO;     // Reference to reusable modal popup window GO
+    private PUModalScript popupSC;  // Reference to reusable modal popup window script
 
     public MainGameScript() {
         InitializeTransitionArray();
@@ -17,13 +17,13 @@ public class MainGameScript : MonoBehaviour {
         }
         playerSC = player.GetComponent<PlayerScript>();
 
-        puGO = UIGORegistry.Find("PopupModal");
-        if (puGO == null) {
+        popupGO = UIGORegistry.Find("PopupModal");
+        if (popupGO == null) {
             Debug.LogError("Error getting Popup Modal GO");
         }
 
-        puSC = puGO.GetComponent<PUModalScript>();
-        if (puSC == null) {
+        popupSC = popupGO.GetComponent<PUModalScript>();
+        if (popupSC == null) {
             Debug.LogError("Error getting Popup Modal script component");
         }
 
@@ -61,15 +61,14 @@ public class MainGameScript : MonoBehaviour {
             Debug.LogError("Error null player script object");
             return;
         }
-        GameObject deckGO = playerSC.DeckGO;
-
+        
         if ((bool)parms["mulligan"]) {
-            puGO.SetActive(true);
+            popupGO.SetActive(true);
 
-            deckGO.GetComponent<DeckScript>().DealCards((int)parms["count"]);
+            playerSC.DealCards((int)parms["count"]);
             
             // Check if the player wants to mulligan
-            puSC.SetModalMessage("Take a mulligan?", MulliganPUResponse);
+            popupSC.SetModalMessage("Take a mulligan?", MulliganPUResponse);
         }
     }
 
@@ -77,15 +76,8 @@ public class MainGameScript : MonoBehaviour {
         if (response) {
             Debug.Log("Mulligan chosen.  Resetting state to P_DEAL");
 
-            HandScript handSC = playerSC.HandSC;
-            if (handSC == null) {
-                Debug.LogError("Error gatting hand script object");
-                return;
-            }
-
-            int curCount = handSC.CardCount();
-            // Reshuffle the entire hand into the deck
-            handSC.RecycleHand();
+            int curCount = playerSC.RecycleHand();
+            
             // Call dealcards again, with 1 less card in hand
             UpdateGameState(GameState.DEAL, new Dictionary<string, object>() { { "count", curCount - 1 }, { "mulligan", true } });
         } else {

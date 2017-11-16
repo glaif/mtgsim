@@ -1,24 +1,50 @@
 ﻿using UnityEngine;
 
 public class PlayerScript : MonoBehaviour {
-    private Deck Deck { get; set; }
-    public GameObject DeckGO { get; private set; }
-    public DeckScript DeckSC { get; private set; }
+    private GameObject playerGO;
 
-    public Hand Hand { get; set; }
-    public GameObject HandGO { get; private set; }
-    public HandScript HandSC { get; private set; }
+    private Deck deck;
+    private GameObject deckGO;
+    private DeckScript deckSC;
 
-    // TEST Code
-    public GameObject deckTopCard;
+    private Hand hand;
+    private GameObject handGO;
+    private HandScript handSC;
 
     void Start () {
         //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
-        DeckGO = GameObject.Find("Player/Cards/Deck");
-        DeckSC = DeckGO.GetComponent<DeckScript>();
 
-        HandGO = GameObject.Find("Player/Cards/Hand");
-        HandSC = HandGO.GetComponent<HandScript>();
+        // Need to ensure that these searches are 
+        // disambiguous for multi-player setting
+        playerGO = this.gameObject;
+        if (playerGO == null) {
+            Debug.LogError("Could not find Player GO");
+            return;
+        }
+
+        deckGO = playerGO.transform.Find("Cards/Deck").gameObject;
+        if (deckGO == null) {
+            Debug.LogError("Could not find Deck GO");
+            return;
+        }
+
+        deckSC = deckGO.GetComponent<DeckScript>();
+        if (deckSC == null) {
+            Debug.LogError("Could not find Deck SC");
+            return;
+        }
+
+        handGO = playerGO.transform.Find("Cards/Hand").gameObject;
+        if (handGO == null) {
+            Debug.LogError("Could not find Hand GO");
+            return;
+        }
+
+        handSC = handGO.GetComponent<HandScript>();
+        if (handSC == null) {
+            Debug.LogError("Could not find Hand SC");
+            return;
+        }
     }
 
     void Update() {
@@ -31,33 +57,30 @@ public class PlayerScript : MonoBehaviour {
         InitializeHand();
     }
 
+    public void DealCards(int count) {
+        Debug.Log("DealHand firing");
+        deckSC.DealCards(count);
+    }
+
+    public int RecycleHand() {
+        int curCount = handSC.CardCount();
+        // Reshuffle the entire hand into the deck
+        handSC.RecycleHand();
+        return curCount;
+    }
+
     private void InitializeDeck(string deckName) {
         Debug.Log("InitializeDeck called");
 
-        Deck = new Deck(deckName);
-        if (Deck == null) {
+        deck = new Deck(deckName);
+        if (deck == null) {
             Debug.LogError("InitializeDeck() called with null deck");
         }
-        DeckSC.InitializeDeck(Deck);
-
-        GameObject c = Instantiate(deckTopCard, DeckGO.transform);
-        Card dtc = new DeckTopCard();
-        dtc.SetZoneTappable(false);
-        c.GetComponent<CardScript>().Card = dtc;
-
-        Texture cardSkin = (Texture)Resources.Load("Cards/CardBack");
-        if (cardSkin == null) {
-            Debug.LogError("Error loading card skin");
-            return;
-        }
-
-        Material cardMat = new Material(Shader.Find("Unlit/Transparent"));
-        cardMat.SetTexture("_MainTex", cardSkin);
-        c.GetComponentInChildren<Renderer>().material = cardMat;
+        deckSC.InitializeDeck(deckGO, deck, handGO);
     }
 
     private void InitializeHand() {
-        Hand = new Hand();
-        HandSC.InitializeHand();
+        hand = new Hand();
+        handSC.InitializeHand(handGO, hand, deckGO);
     }
 }
