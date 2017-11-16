@@ -60,6 +60,10 @@ public abstract class Card {
         return _tapped;
     }
 
+    public override string ToString() {
+        return Name;
+    }
+
     // Only include functions that should be called in subclass and decorator instances
     public abstract void Cast();
     public abstract void Resolve();

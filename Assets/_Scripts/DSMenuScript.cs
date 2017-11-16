@@ -33,7 +33,8 @@ public class DSMenuScript : MonoBehaviour {
             return;
         }
 
-        string deckName = ddText.text;
+        //string deckName = ddText.text;
+        string deckName = "deck1.txt";  // TEST CODE
         playerSC.PrepStartGame(deckName);
 
         // Start game state machine

@@ -34,7 +34,7 @@ public class MainGameScript : MonoBehaviour {
         // Once opponent connects roll d20
         // Winner hosts state machine for the game
         // Loser set up to receive state machine updates from winner
-        // For now, just one player so set htings in motion
+        // For now, just one player so set things in motion
 
 
     }

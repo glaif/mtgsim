@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
 
 public class Deck {
     private string deckFile;
@@ -18,9 +19,22 @@ public class Deck {
         // Then instantiate and add cards to deck
         // Instantiate prefab for a card when it 
         // is drawn from deck, though
-        
+
         //TEST CODE
-        TestDeck();
+        //TestDeck();
+        string deckFilePath = @"C:\stuff\src\mtg_importer\src\" + deckFile;
+
+        StreamReader sr = new StreamReader(deckFilePath);
+        string cardDescStr = sr.ReadLine();
+        string[] cardDescArr;
+
+        while (cardDescStr != null) {
+            cardDescArr = cardDescStr.Split('|');
+            deckList.Add(new CardTester(cardDescArr[0], int.Parse(cardDescArr[1]), 
+                         int.Parse(cardDescArr[3]), cardDescArr[4], cardDescArr[5]));
+            cardDescStr = sr.ReadLine();
+        }
+
         foreach (Card c in deckList) {
             c.SetZoneTappable(false);
         }

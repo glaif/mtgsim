@@ -1,0 +1,200 @@
+435152|Adanto Vanguard
+435174|Adanto, the First Fort
+435373|Admiral Beckett Brass
+435197|Air Elemental
+435330|Ancient Brontodon
+435286|Angrath's Marauders
+435242|Anointed Deacon
+435198|Arcane Adaptation
+435243|Arguel's Blood Fast
+435153|Ashes of the Abhorrent
+435331|Atzocan Archer
+435154|Axis of Mortality
+435227|Azcanta, the Sunken Ruin
+435374|Belligerent Brontodon
+435155|Bellowing Aegisaur
+435156|Bishop of Rebirth
+435245|Bishop of the Bloodstained
+435157|Bishop's Soldier
+435246|Blight Keeper
+435332|Blinding Fog
+435247|Bloodcrazed Paladin
+435333|Blossom Dryad
+435287|Bonded Horncrest
+435248|Boneyard Parley
+435288|Brazen Buccaneers
+435158|Bright Reprisal
+435289|Burning Sun's Avatar
+435375|Call to the Feast
+435199|Cancel
+435290|Captain Lannery Storm
+435291|Captivating Crew
+435334|Carnage Tyrant
+435442|Castaway's Despair
+435292|Charging Monstrosaur
+435200|Chart a Course
+435389|Cobbled Wings
+435335|Colossal Dreadmaw
+435336|Commune with Dinosaurs
+435391|Conqueror's Foothold
+435390|Conqueror's Galleon
+435249|Contract Killing
+435250|Costly Plunder
+435337|Crash the Ramparts
+435338|Crushing Canopy
+435201|Daring Saboteur
+435251|Dark Nourishment
+435376|Deadeye Plunderers
+435202|Deadeye Quartermaster
+435252|Deadeye Tormentor
+435253|Deadeye Tracker
+435339|Deathgorge Scavenger
+435254|Deathless Ancient
+435340|Deeproot Champion
+435341|Deeproot Warrior
+435203|Deeproot Waters
+435293|Demolish
+435159|Demystify
+435204|Depths of Desire
+435255|Desperate Castaways
+435294|Dinosaur Stampede
+435377|Dire Fleet Captain
+435256|Dire Fleet Hoarder
+435257|Dire Fleet Interloper
+435258|Dire Fleet Ravager
+435205|Dive Down
+435392|Dowsing Dagger
+435413|Dragonskull Summit
+435206|Dreamcaller Siren
+435342|Drover of the Mighty
+435414|Drowned Catacomb
+435295|Dual Shot
+435259|Duress
+435394|Dusk Legion Dreadnought
+435160|Duskborne Skymarcher
+435395|Elaborate Firecannon
+435343|Emergent Growth
+435161|Emissary of Sunrise
+435344|Emperor's Vanguard
+435162|Encampment Keeper
+435207|Entrancing Melody
+435260|Fathom Fleet Captain
+435261|Fathom Fleet Cutthroat
+435296|Fathom Fleet Firebrand
+435208|Favorable Winds
+435396|Fell Flagship
+435415|Field of Ruin
+435297|Fiery Cannonade
+435298|Fire Shrine Keeper
+435299|Firecannon Blast
+435209|Fleet Swallower
+435438|Forest
+435300|Frenzied Raptor
+435397|Gilded Sentinel
+435378|Gishath, Sun's Avatar
+435416|Glacial Fortress
+435163|Glorifier of Dusk
+435164|Goring Ceratops
+435443|Grasping Current
+435345|Grazing Whiptail
+435262|Grim Captain's Call
+435346|Growing Rites of Itlimoc
+435301|Headstrong Brute
+435210|Headwater Sentries
+435263|Heartless Pillage
+435211|Herald of Secret Streams
+435398|Hierophant's Chalice
+435302|Hijack
+435379|Hostage Taker
+435446|Huatli, Dinosaur Knight
+435380|Huatli, Warrior Poet
+435447|Huatli's Snubhorn
+435448|Huatli's Spurring
+435165|Imperial Aerosaur
+435166|Imperial Lancer
+435167|Inspiring Cleric
+435426|Island
+435347|Itlimoc, Cradle of the Sun
+435168|Ixalan's Binding
+435348|Ixalli's Diviner
+435349|Ixalli's Keeper
+435212|Jace, Cunning Castaway
+435441|Jace, Ingenious Mind-Mage
+435444|Jace's Sentinel
+435350|Jade Guardian
+435351|Jungle Delver
+435169|Kinjalli's Caller
+435170|Kinjalli's Sunwing
+435264|Kitesail Freebooter
+435213|Kopala, Warden of Waves
+435352|Kumena's Speaker
+435171|Legion Conquistador
+435172|Legion's Judgment
+435173|Legion's Landing
+435303|Lightning Strike
+435304|Lightning-Rig Crew
+435214|Lookout's Dispersal
+435175|Looming Altisaur
+435393|Lost Vale
+435265|Lurking Chupacabra
+435305|Makeshift Munitions
+435381|Marauding Looter
+435266|March of the Drowned
+435267|Mark of the Vampire
+435176|Mavren Fein, Dusk Apostle
+435353|Merfolk Branchwalker
+435434|Mountain
+435215|Navigator's Ruin
+435306|Nest Robber
+435354|New Horizons
+435355|Old-Growth Dryads
+435216|One With the Wind
+435217|Opt
+435307|Otepec Huntmaster
+435218|Overflowing Insight
+435177|Paladin of the Bloodstained
+435219|Perilous Voyage
+435399|Pillar of Origins
+435178|Pious Interdiction
+435400|Pirate's Cutlass
+435220|Pirate's Prize
+435422|Plains
+435356|Pounce
+435179|Priest of the Wakening Sun
+435401|Primal Amulet
+435402|Primal Wellspring
+435221|Prosperous Pirates
+435403|Prying Blade
+435180|Pterodon Knight
+435268|Queen's Agent
+435269|Queen's Bay Soldier
+435181|Queen's Commission
+435382|Raging Swordtooth
+435270|Raiders' Wake
+435182|Rallying Roar
+435308|Rampaging Ferocidon
+435357|Ranging Raptors
+435183|Raptor Companion
+435309|Raptor Hatchling
+435358|Ravenous Daggertooth
+435383|Regisaur Alpha
+435310|Repeating Barrage
+435271|Revel in Riches
+435311|Rigging Runner
+435312|Rile
+435359|Ripjaw Raptor
+435184|Ritual of Rejuvenation
+435360|River Heralds' Boon
+435222|River Sneak
+435223|River's Rebuke
+435417|Rootbound Crag
+435313|Rowdy Crew
+435272|Ruin Raider
+435314|Rummaging Goblin
+435224|Run Aground
+435273|Ruthless Knave
+435225|Sailor of Means
+435274|Sanctum Seeker
+435185|Sanguine Sacrament
+435361|Savage Stomp
+435226|Search for Azcanta
