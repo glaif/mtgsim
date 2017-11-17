@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 
 public class Deck {
+    private const string DECK_PATH = @"C:\stuff\MTG\";
     private string deckFile;
     private List<Card> deckList = new List<Card>();
     
@@ -22,8 +23,8 @@ public class Deck {
 
         //TEST CODE
         //TestDeck();
-        string deckFilePath = @"C:\stuff\src\mtg_importer\src\" + deckFile;
-
+        string deckFilePath = DECK_PATH + deckFile;
+        
         StreamReader sr = new StreamReader(deckFilePath);
         string cardDescStr = sr.ReadLine();
         string[] cardDescArr;
