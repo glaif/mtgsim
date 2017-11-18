@@ -2,6 +2,10 @@
 using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
+    public GameObject playerPrefab;
+    public GameObject LocalPlayerGO { get; private set; }
+
+    private GameObject battleGroundGO;
     private PlayerScript playerSC;
     private GameObject popupGO;     // Reference to reusable modal popup window GO
     private PUModalScript popupSC;  // Reference to reusable modal popup window script
@@ -11,11 +15,12 @@ public class MainGameScript : MonoBehaviour {
     }
 
     void Start() {
-        GameObject player = GameObject.Find("Battleground/Player");
-        if (player == null) {
+        battleGroundGO = GameObject.Find("Battleground");
+        LocalPlayerGO = Instantiate(playerPrefab, battleGroundGO.transform);
+        if (LocalPlayerGO == null) {
             Debug.LogError("Error getting player GO");
         }
-        playerSC = player.GetComponent<PlayerScript>();
+        playerSC = LocalPlayerGO.GetComponent<PlayerScript>();
 
         popupGO = UIGORegistry.Find("PopupModal");
         if (popupGO == null) {
@@ -56,7 +61,7 @@ public class MainGameScript : MonoBehaviour {
 
     // Do the deal cards logic - int count=7, bool mulligan=true
     private void DealCards(Dictionary<string, object> parms) {
-        Debug.Log("DealCards firing");
+        //Debug.Log("DealCards firing");
         if (playerSC == null) {
             Debug.LogError("Error null player script object");
             return;

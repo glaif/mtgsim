@@ -9,13 +9,13 @@ public class Deck {
     
 
     public Deck(string deck_file) {
-        Debug.Log("MTGDeck::Constructor called: deck == " + deck_file);
+        //Debug.Log("MTGDeck::Constructor called: deck == " + deck_file);
         deckFile = deck_file;
         LoadDeck();
     }
 
     void LoadDeck() {
-        Debug.Log("MTGDeck::LoadDeck called: deckFile == " + deckFile);
+        //Debug.Log("MTGDeck::LoadDeck called: deckFile == " + deckFile);
         // Need to read deck from external file
         // Then instantiate and add cards to deck
         // Instantiate prefab for a card when it 

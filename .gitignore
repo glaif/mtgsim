@@ -35,6 +35,9 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+*.exe
+UnityPlayer.dll
+mtg_Data/
 
 # StyleCop
 **StyleCop.Cache*

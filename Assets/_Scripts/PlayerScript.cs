@@ -58,7 +58,7 @@ public class PlayerScript : MonoBehaviour {
     }
 
     public void DealCards(int count) {
-        Debug.Log("DealHand firing");
+        //Debug.Log("DealCards firing");
         deckSC.DealCards(count);
     }
 
@@ -70,7 +70,7 @@ public class PlayerScript : MonoBehaviour {
     }
 
     private void InitializeDeck(string deckName) {
-        Debug.Log("InitializeDeck called");
+        //Debug.Log("InitializeDeck called");
 
         deck = new Deck(deckName);
         if (deck == null) {

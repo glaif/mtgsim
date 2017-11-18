@@ -15,7 +15,22 @@ public class DSMenuScript : MonoBehaviour {
     }
 	
     public void SelectDeckClick() {
-        PlayerScript playerSC = GameObject.Find("Player").GetComponent<PlayerScript>();
+        MainGameScript mainGameSC = GameObject.Find("Battleground").GetComponent<MainGameScript>();
+        if (mainGameSC == null) {
+            Debug.Log("Null MainGameScript object reference for DeckSelectMenu");
+        }
+
+        // Is there a possible race condition here?
+        // Can LocalPlayer be null if mainGameSC is behind
+        // this script?
+        GameObject localPlayer = mainGameSC.LocalPlayerGO;
+        if (localPlayer == null) {
+            Debug.Log("Null localPlayer in SelectDeckClick");
+            Debug.LogError("Error getting localPlayer from MainGameScript");
+            Application.Quit();
+        }
+
+        PlayerScript playerSC = localPlayer.GetComponent<PlayerScript>();
         if (playerSC == null) {
             Debug.LogError("Unable to find Player GO");
             return;
@@ -38,7 +53,6 @@ public class DSMenuScript : MonoBehaviour {
         playerSC.PrepStartGame(deckName);
 
         // Start game state machine
-        MainGameScript mainGameSC = GameObject.Find("Battleground").GetComponent<MainGameScript>();
         dsGO.SetActive(false);
         mainGameSC.UpdateGameState(MainGameScript.GameState.DEAL, null);
     }

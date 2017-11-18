@@ -81,8 +81,8 @@ public class DeckScript : MonoBehaviour {
 
     public void DrawFromTopOfDeck(int drawCount=1) {
         // Draw drawCount many cards from top of deck
-        Debug.Log("drawCount = " + drawCount);
-        Debug.Log("DrawFromTopOfDeck called to draw " + drawCount + " card" + (drawCount > 1 ? "s":""));
+        //Debug.Log("drawCount = " + drawCount);
+        //Debug.Log("DrawFromTopOfDeck called to draw " + drawCount + " card" + (drawCount > 1 ? "s":""));
 
         List<Card> cardsDrawn = deck.GetNextNCards(drawCount);
         

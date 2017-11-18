@@ -20,7 +20,6 @@ public class MainMenuScript : MonoBehaviour {
         bool down = Input.GetButtonDown("ShowMainMenu");
 
         if (dsGO == null) {
-            Debug.Log("Null GameObject reference for DeckSelectMenu");
             dsGO = UIGORegistry.Find("DeckSelectMenu");
         }
 
@@ -36,7 +35,7 @@ public class MainMenuScript : MonoBehaviour {
     }
 
     public void StartGameClick() {
-        Debug.Log("StartGameClick fired");
+        //Debug.Log("StartGameClick fired");
         mmGO.SetActive(false);
         if (dsGO == null) {
             dsGO = UIGORegistry.Find("DeckSelectMenu");
