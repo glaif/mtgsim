@@ -3,53 +3,30 @@ using UnityEngine;
 
 public class DeckScript : MonoBehaviour {
     public GameObject CardPrefab;  // Stores reference to the Card Prefab
-
-    private Deck deck;
+    public HandScript handSC;
 
     private GameObject handGO;
-    private HandScript handSC;
-
     private GameObject deckGO;
-    private DeckScript deckSC;
+    private Deck deck;
 
     // TEST Code
     public GameObject deckTopCard;
 
-    public void InitializeDeck(GameObject deckGO, Deck deck, GameObject handGO) {
-        if (deckGO == null) {
-            Debug.LogError("Could not find Deck GO");
-            return;
-        }
-        this.deckGO = deckGO;
-
-        deckSC = deckGO.GetComponent<DeckScript>();
-        if (deckSC == null) {
-            Debug.LogError("Could not find Deck SC");
-            return;
-        }
-
-        if (handGO == null) {
-            Debug.LogError("Could not find Hand GO");
-            return;
-        }
-        this.handGO = handGO;
-
-        handSC = handGO.GetComponent<HandScript>();
-        if (handSC == null) {
-            Debug.LogError("Could not find Hand SC");
-            return;
-        }
-
+    public void InitializeDeck(Deck deck) {
         if (deck == null) {
             Debug.LogError("Null Deck passed into InitializaDeck()");
             return;
         }
         this.deck = deck;
+
+        deckGO = gameObject;
+        handGO = handSC.gameObject;
+
         ShuffleDeck();
     }
 
     private void ShuffleDeck() {
-        this.deck.Shuffle();
+        deck.Shuffle();
 
         gameObject.GetComponentInChildren<TextMesh>().text =
             string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());

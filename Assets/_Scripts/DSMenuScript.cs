@@ -2,24 +2,15 @@
 using UnityEngine.UI;
 
 public class DSMenuScript : MonoBehaviour {
-    private GameObject dsGO;
+    public GameObject dsGO;
+    public MainGameScript mainGameSC;
+    public Text ddText;
 
     void Start() {
-        dsGO = GameObject.FindGameObjectWithTag("DeckSelectMenu");
-        if (dsGO == null) {
-            Debug.Log("Null GameObject reference for DeckSelectMenu");
-            Application.Quit();
-        }
-        UIGORegistry.Register(dsGO.gameObject);
         dsGO.SetActive(false);
     }
 	
     public void SelectDeckClick() {
-        MainGameScript mainGameSC = GameObject.Find("Battleground").GetComponent<MainGameScript>();
-        if (mainGameSC == null) {
-            Debug.Log("Null MainGameScript object reference for DeckSelectMenu");
-        }
-
         // Is there a possible race condition here?
         // Can LocalPlayer be null if mainGameSC is behind
         // this script?
@@ -36,20 +27,11 @@ public class DSMenuScript : MonoBehaviour {
             return;
         }
 
-        GameObject ddGO = GameObject.Find("SelectDeckDropdown/Label");
-        if (ddGO == null) {
-            Debug.LogError("Unable to find Deck Selection Dropdown GO");
-            return;
-        }
+        string deckName = ddText.text;
+        Debug.Log(string.Format("Deck selected: {0}", ddText.text));
 
-        Text ddText = ddGO.GetComponent<Text>();
-        if (ddText == null) {
-            Debug.LogError("Unable to get Label Text component for Deck Selection Dropdown");
-            return;
-        }
+        deckName = "deck1.txt";  // TEST CODE
 
-        //string deckName = ddText.text;
-        string deckName = "deck1.txt";  // TEST CODE
         playerSC.PrepStartGame(deckName);
 
         // Start game state machine

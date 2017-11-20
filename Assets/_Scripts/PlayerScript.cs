@@ -1,50 +1,16 @@
 ﻿using UnityEngine;
 
 public class PlayerScript : MonoBehaviour {
+    public DeckScript deckSC;
+    public HandScript handSC;
+
     private GameObject playerGO;
-
     private Deck deck;
-    private GameObject deckGO;
-    private DeckScript deckSC;
-
     private Hand hand;
-    private GameObject handGO;
-    private HandScript handSC;
 
     void Start () {
         //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
-
-        // Need to ensure that these searches are 
-        // disambiguous for multi-player setting
-        playerGO = this.gameObject;
-        if (playerGO == null) {
-            Debug.LogError("Could not find Player GO");
-            return;
-        }
-
-        deckGO = playerGO.transform.Find("Cards/Deck").gameObject;
-        if (deckGO == null) {
-            Debug.LogError("Could not find Deck GO");
-            return;
-        }
-
-        deckSC = deckGO.GetComponent<DeckScript>();
-        if (deckSC == null) {
-            Debug.LogError("Could not find Deck SC");
-            return;
-        }
-
-        handGO = playerGO.transform.Find("Cards/Hand").gameObject;
-        if (handGO == null) {
-            Debug.LogError("Could not find Hand GO");
-            return;
-        }
-
-        handSC = handGO.GetComponent<HandScript>();
-        if (handSC == null) {
-            Debug.LogError("Could not find Hand SC");
-            return;
-        }
+        playerGO = gameObject;
     }
 
     void Update() {
@@ -58,7 +24,6 @@ public class PlayerScript : MonoBehaviour {
     }
 
     public void DealCards(int count) {
-        //Debug.Log("DealCards firing");
         deckSC.DealCards(count);
     }
 
@@ -70,17 +35,15 @@ public class PlayerScript : MonoBehaviour {
     }
 
     private void InitializeDeck(string deckName) {
-        //Debug.Log("InitializeDeck called");
-
         deck = new Deck(deckName);
         if (deck == null) {
             Debug.LogError("InitializeDeck() called with null deck");
         }
-        deckSC.InitializeDeck(deckGO, deck, handGO);
+        deckSC.InitializeDeck(deck);
     }
 
     private void InitializeHand() {
         hand = new Hand();
-        handSC.InitializeHand(handGO, hand, deckGO);
+        handSC.InitializeHand(hand);
     }
 }

@@ -2,39 +2,11 @@
 using UnityEngine;
 
 public class HandScript : MonoBehaviour {
+    public DeckScript deckSC;
+
     private Hand hand;
 
-    private GameObject handGO;
-    private HandScript handSC;
-
-    private GameObject deckGO;
-    private DeckScript deckSC;
-
-    public void InitializeHand(GameObject handGO, Hand hand, GameObject deckGO) {
-        if (deckGO == null) {
-            Debug.LogError("Could not find Deck GO");
-            return;
-        }
-        this.deckGO = deckGO;
-
-        deckSC = deckGO.GetComponent<DeckScript>();
-        if (deckSC == null) {
-            Debug.LogError("Could not find Deck SC");
-            return;
-        }
-
-        if (handGO == null) {
-            Debug.LogError("Could not find Hand GO");
-            return;
-        }
-        this.handGO = handGO;
-
-        handSC = handGO.GetComponent<HandScript>();
-        if (handSC == null) {
-            Debug.LogError("Could not find Hand SC");
-            return;
-        }
-
+    public void InitializeHand(Hand hand) {
         if (hand == null) {
             Debug.LogError("Null Hand passed into InitializaDeck()");
             return;

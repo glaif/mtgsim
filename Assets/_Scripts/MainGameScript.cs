@@ -5,34 +5,26 @@ public class MainGameScript : MonoBehaviour {
     public GameObject playerPrefab;
     public GameObject LocalPlayerGO { get; private set; }
 
-    private GameObject battleGroundGO;
+    public GameObject popupGO;     // Reference to reusable modal popup window GO
+    public PUModalScript popupSC;  // Reference to reusable modal popup window script
+
     private PlayerScript playerSC;
-    private GameObject popupGO;     // Reference to reusable modal popup window GO
-    private PUModalScript popupSC;  // Reference to reusable modal popup window script
 
     public MainGameScript() {
         InitializeTransitionArray();
     }
 
     void Start() {
-        battleGroundGO = GameObject.Find("Battleground");
+        GameObject battleGroundGO = gameObject; // This is not strictly necessary, but is more clear
         LocalPlayerGO = Instantiate(playerPrefab, battleGroundGO.transform);
         if (LocalPlayerGO == null) {
             Debug.LogError("Error getting player GO");
         }
         playerSC = LocalPlayerGO.GetComponent<PlayerScript>();
-
-        popupGO = UIGORegistry.Find("PopupModal");
-        if (popupGO == null) {
-            Debug.LogError("Error getting Popup Modal GO");
+        if (playerSC == null) {
+            Debug.LogError("Error null player SC object");
+            return;
         }
-
-        popupSC = popupGO.GetComponent<PUModalScript>();
-        if (popupSC == null) {
-            Debug.LogError("Error getting Popup Modal script component");
-        }
-
-        // Do Photon connect stuff and wait for opponent to join
     }
 
     void Update() {
@@ -40,14 +32,11 @@ public class MainGameScript : MonoBehaviour {
         // Winner hosts state machine for the game
         // Loser set up to receive state machine updates from winner
         // For now, just one player so set things in motion
-
-
     }
 
     public int UpdateGameState(GameState state, Dictionary<string, object> newParms) {
         // Turns: untap, upkeep, draw, main, combat, main, discard
         // Adjusts game state and synchronizes with remote player state machine
-
         Debug.Log("GameState changed to: " + state);
 
         TransitionData transData = GetTransition(state);
@@ -61,12 +50,6 @@ public class MainGameScript : MonoBehaviour {
 
     // Do the deal cards logic - int count=7, bool mulligan=true
     private void DealCards(Dictionary<string, object> parms) {
-        //Debug.Log("DealCards firing");
-        if (playerSC == null) {
-            Debug.LogError("Error null player script object");
-            return;
-        }
-        
         if ((bool)parms["mulligan"]) {
             popupGO.SetActive(true);
 
