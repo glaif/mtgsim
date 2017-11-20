@@ -1,58 +1,77 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuScript : MonoBehaviour {
-    private GameObject mmGO;
-    private GameObject dsGO;
+    public GameObject mmGO;
+    public GameObject dsGO;
+    public InputField usernameIF;
+    public MainGameScript mainGameSC;
+
+    static string playerNamePrefKey = "PlayerName";
 
     void Start() {
-        mmGO = GameObject.FindWithTag("MainMenu");
-        if (mmGO == null) {
-            Debug.Log("Null GameObject reference for MainMenu");
-            Application.Quit();
-        }
-
-        UIGORegistry.Register(mmGO.gameObject);
         mmGO.SetActive(true);
+        SetDefaultUserName();
     }
 
     void Update() {
-        // First check to see is escape key was just pressed
-        bool down = Input.GetButtonDown("ShowMainMenu");
+        //// First check to see is escape key was just pressed
+        //bool down = Input.GetButtonDown("ShowMainMenu");
 
-        if (dsGO == null) {
-            dsGO = UIGORegistry.Find("DeckSelectMenu");
-        }
-
-        // Handle escape key menu trigger
-        if (down) {
-            dsGO.SetActive(false);
-            if (mmGO.activeSelf == true) {
-                mmGO.SetActive(false);
-            } else {
-                mmGO.SetActive(true);
-            }
-        }
+        //// Handle escape key menu trigger
+        //if (down) {
+        //    dsGO.SetActive(false);
+        //    if (mmGO.activeSelf == true) {
+        //        mmGO.SetActive(false);
+        //    } else {
+        //        mmGO.SetActive(true);
+        //    }
+        //}
     }
 
     public void StartGameClick() {
-        //Debug.Log("StartGameClick fired");
+        SetPlayerName();
         mmGO.SetActive(false);
-        if (dsGO == null) {
-            dsGO = UIGORegistry.Find("DeckSelectMenu");
-            if (dsGO == null) {
-                Debug.Log("Null GameObject reference for DeckSelectMenu");
-            }
-        }
         dsGO.SetActive(true);
     }
 
+    private void SetDefaultUserName() {
+        string defaultName = "";
+        if (PlayerPrefs.HasKey(playerNamePrefKey)) {
+            defaultName = PlayerPrefs.GetString(playerNamePrefKey);
+            usernameIF.text = defaultName;
+        }
+        PhotonNetwork.playerName = defaultName;
+    }
+
+    public void SetPlayerName() {
+        // force a trailing space string in case value is an empty 
+        // string, else playerName would not be updated.
+        PhotonNetwork.playerName = usernameIF.text;
+        PlayerPrefs.SetString(playerNamePrefKey, usernameIF.text);
+    }
+
     public void StartNetworkGameClick() {
-        // Will be used when we add the network play capabilities
-        // Do network init stuff
+        EnableNetworking();
         StartGameClick();
     }
 
     public void ImportDeckClick() {
         Debug.Log("ImportDeckClick fired");
+    }
+
+    private void EnableNetworking() {
+        GameObject localPlayerGO = mainGameSC.LocalPlayerGO;
+        if (localPlayerGO == null) {
+            Debug.Log("Null localPlayer in SelectDeckClick");
+            Debug.LogError("Error getting localPlayer from MainGameScript");
+            Application.Quit();
+        }
+
+        Transform localNetPlayerT = localPlayerGO.transform.Find("NetworkPlayer");
+        if (localNetPlayerT == null) {
+            Debug.LogError("Null Transform object reference for NetworkPlayer");
+        }
+        localNetPlayerT.gameObject.SetActive(true);
     }
 }

@@ -1,70 +1,50 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class NetworkPlayerScript : MonoBehaviour {
-    private GameObject localPlayerGO;
-    private PlayerScript playerSC;
-    private GameObject dsGO;
+public class NetworkPlayerScript : Photon.PunBehaviour {
+    // The PUN loglevel
+    public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
 
-    //[SyncVar]
-    //int testVar = 0;
+    private string GAME_VERSION = "v0.2";
 
     // Use this for initialization
-    void Start () {
-		//if (isLocalPlayer) {
-  //          MainGameScript mainGameSC = GameObject.Find("Battleground").GetComponent<MainGameScript>();
-  //          if (mainGameSC == null) {
-  //              Debug.Log("Null MainGameScript object reference for NetworkPlayerScript");
-  //          }
-
-  //          // Is there a possible race condition here?
-  //          // Can LocalPlayer be null if mainGameSC is behind
-  //          // this script?
-  //          localPlayerGO = mainGameSC.LocalPlayerGO;
-  //          if (localPlayerGO == null) {
-  //              Debug.Log("Null localPlayer in SelectDeckClick");
-  //              Debug.LogError("Error getting localPlayer from NetworkPlayerScript");
-  //              return;
-  //          }
-  //          playerSC = localPlayerGO.GetComponent<PlayerScript>();
-  //          if (playerSC == null) {
-  //              Debug.LogError("Unable to find Player SC in NetworkPlayerScript");
-  //              return;
-  //          }
-  //          Debug.Log("Local Player Start Complete");
-  //      }
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        //if (!isLocalPlayer)
-        //    return;
-
-        //if (Input.GetKeyDown(KeyCode.Space)) {
-        //    Debug.Log("testVar: " + testVar);
-        //    CmdIncTest();
-        //    Debug.Log("testVar: " + testVar);
-        //}
+    void Start() {
+        PhotonNetwork.logLevel = Loglevel;
+        PhotonNetwork.ConnectUsingSettings(GAME_VERSION);
     }
 
-    //[Command]
-    //void CmdIncTest() {
-    //    testVar += 1;
-    //}
+    // Update is called once per frame
+    void Update() {
 
-    //public override void OnStartClient() {
-    //    Debug.Log("OnStartClient fired");
-    //}
+    }
 
-    //public override void OnStartLocalPlayer() {
-    //    Debug.Log("OnStartLocalPlayer fired");
-    //    if (dsGO == null) {
-    //        dsGO = UIGORegistry.Find("DeckSelectMenu");
-    //        if (dsGO == null) {
-    //            Debug.Log("Null GameObject reference for DeckSelectMenu");
-    //        }
-    //    }
-    //    dsGO.SetActive(true);
-    //}
+    public override void OnConnectedToMaster() {
+        Debug.Log("Connected to Photon server");
+        RoomOptions ro = new RoomOptions();
+        ro.IsVisible = false;
+        ro.MaxPlayers = 2;
+        PhotonNetwork.JoinOrCreateRoom("MTG", ro, TypedLobby.Default);
+    }
+
+    public override void OnJoinedRoom() {
+        Debug.Log("Joined Photon room");
+        //this.photonView.RPC("ChatMessage", PhotonTargets.All, "jup", "and jup!");
+    }
+
+    [PunRPC]
+    void ChatMessage(string a, string b) {
+        Debug.Log(string.Format("ChatMessage {0} {1}", a, b));
+    }
+
+    public override void OnDisconnectedFromPhoton() {
+        Debug.Log("Disconnected from Photon server");
+    }
+
+    public override void OnPhotonCreateRoomFailed(object[] codeAndMsg) {
+        Debug.Log("Failed to create room on Photon server");
+    }
+
+    public override void OnPhotonJoinRoomFailed(object[] codeAndMsg) {
+        Debug.Log("Failed to join room on Photon server");
+    }
+
 }
