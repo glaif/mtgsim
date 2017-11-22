@@ -4,12 +4,15 @@ using UnityEngine.UI;
 public class MainMenuScript : MonoBehaviour {
     public GameObject mmGO;
     public GameObject dsGO;
+    public GameObject conMessageGO;
     public InputField usernameIF;
     public MainGameScript mainGameSC;
+    public MainNetworkScript mainNetSC;
 
     static string playerNamePrefKey = "PlayerName";
 
     void Start() {
+        conMessageGO.SetActive(false);
         mmGO.SetActive(true);
         SetDefaultUserName();
     }
@@ -52,8 +55,10 @@ public class MainMenuScript : MonoBehaviour {
     }
 
     public void StartNetworkGameClick() {
+        SetPlayerName();
+        mmGO.SetActive(false);
+        conMessageGO.SetActive(true);
         EnableNetworking();
-        StartGameClick();
     }
 
     public void ImportDeckClick() {
@@ -61,17 +66,6 @@ public class MainMenuScript : MonoBehaviour {
     }
 
     private void EnableNetworking() {
-        GameObject localPlayerGO = mainGameSC.LocalPlayerGO;
-        if (localPlayerGO == null) {
-            Debug.Log("Null localPlayer in SelectDeckClick");
-            Debug.LogError("Error getting localPlayer from MainGameScript");
-            Application.Quit();
-        }
-
-        Transform localNetPlayerT = localPlayerGO.transform.Find("NetworkPlayer");
-        if (localNetPlayerT == null) {
-            Debug.LogError("Null Transform object reference for NetworkPlayer");
-        }
-        localNetPlayerT.gameObject.SetActive(true);
+        mainNetSC.enabled = true;
     }
 }

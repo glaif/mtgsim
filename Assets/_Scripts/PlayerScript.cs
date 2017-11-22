@@ -4,13 +4,13 @@ public class PlayerScript : MonoBehaviour {
     public DeckScript deckSC;
     public HandScript handSC;
 
-    private GameObject playerGO;
+    //private GameObject playerGO;
     private Deck deck;
     private Hand hand;
 
     void Start () {
         //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
-        playerGO = gameObject;
+        //playerGO = gameObject;
     }
 
     void Update() {
