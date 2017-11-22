@@ -28,6 +28,7 @@ MonoBehaviour:
   RunInBackground: 1
   RpcList:
   - Chat
+  - ChatMessage
   - ColorRpc
   - DestroyRpc
   - DoJump
@@ -42,5 +43,4 @@ MonoBehaviour:
   - RequestForPickupItems
   - RequestForPickupTimes
   - TaggedPlayer
-  - ChatMessage
   DisableAutoOpenWizard: 1
