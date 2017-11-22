@@ -30,7 +30,7 @@ public class MainNetworkScript : Photon.PunBehaviour {
     public override void OnJoinedRoom() {
         Debug.Log("Joined Photon room");
         GameObject netPlayer = PhotonNetwork.Instantiate(netPlayerPrefab.name, netObjs.transform.position, Quaternion.identity, 0);
-        netPlayer.transform.parent = netObjs.transform;
+        //netPlayer.transform.parent = netObjs.transform;
         conMessageGO.SetActive(false);
         dsGO.SetActive(true);
     }

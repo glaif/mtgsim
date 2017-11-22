@@ -8,8 +8,15 @@ public class NetworkPlayerScript : Photon.MonoBehaviour/*, IPunObservable*/ {
 
     void Start() {
         Debug.Log("Starting NetworkPlayerScript");
-        photonView.RPC("ChatMessage", PhotonTargets.Others, PhotonNetwork.player.NickName, "Hello!");
-        //photonView.RPC("ChatMessage", PhotonTargets.All, PhotonNetwork.player.NickName, "Hello2!");
+        GameObject netObjsGO = GameObject.Find("Network Objects");
+        if (netObjsGO == null) {
+            Debug.LogError("Cannot find Network Objects GO");
+        }
+        transform.parent = netObjsGO.transform;
+        if (photonView.isMine == true) {
+            photonView.RPC("ChatMessage", PhotonTargets.Others, PhotonNetwork.player.NickName, "Hello!");
+            //photonView.RPC("ChatMessage", PhotonTargets.All, PhotonNetwork.player.NickName, "Hello2!");
+        }
     }
 
     void Update() {
