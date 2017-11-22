@@ -1,14 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
     public GameObject playerPrefab;
     public GameObject LocalPlayerGO { get; private set; }
 
+    public GameObject MasterPlayerGO { get; set; }
+
     public GameObject popupGO;     // Reference to reusable modal popup window GO
     public PUModalScript popupSC;  // Reference to reusable modal popup window script
 
     private PlayerScript playerSC;
+
+    private bool OReadySignalled = false;
 
     public MainGameScript() {
         InitializeTransitionArray();
@@ -32,20 +37,6 @@ public class MainGameScript : MonoBehaviour {
         // Winner hosts state machine for the game
         // Loser set up to receive state machine updates from winner
         // For now, just one player so set things in motion
-    }
-
-    public int UpdateGameState(GameState state, Dictionary<string, object> newParms) {
-        // Turns: untap, upkeep, draw, main, combat, main, discard
-        // Adjusts game state and synchronizes with remote player state machine
-        Debug.Log("GameState changed to: " + state);
-
-        TransitionData transData = GetTransition(state);
-        if (newParms == null) {
-            transData.TransFunc(transData.Parms);
-        } else {
-            transData.TransFunc(newParms);
-        }
-        return 0;
     }
 
     // Do the deal cards logic - int count=7, bool mulligan=true
@@ -75,15 +66,47 @@ public class MainGameScript : MonoBehaviour {
         }
     }
 
+    public void SigOReady() {
+        OReadySignalled = true;
+    }
+
+    private IEnumerator WaitForSigOReady() {
+        while (!OReadySignalled) {
+            yield return new WaitForSeconds(.1f);
+        }
+    }
+
+    // Game State Machine Functions
+
+    public int UpdateGameState(GameState state, Dictionary<string, object> newParms) {
+        // Turns: untap, upkeep, draw, main, combat, main, discard
+        // Adjusts game state and synchronizes with remote player state machine
+        Debug.Log("GameState changed to: " + state);
+
+        TransitionData transData = GetTransition(state);
+        if (newParms == null) {
+            transData.TransFunc(transData.Parms);
+        } else {
+            transData.TransFunc(newParms);
+        }
+        return 0;
+    }
+
     private void PReady(Dictionary<string, object> parms) {
         Debug.Log("PReady firing");
-        // Wait here for other player(s) to move into ready state
-        // Then move to P_UNTAP or O_UNTAP depending on who goes first
-        UpdateGameState(GameState.P_UNTAP, null);
+        UpdateGameState(GameState.O_READY, null);
     }
 
     private void OReady(Dictionary<string, object> parms) {
-
+        Debug.Log("OReady firing");
+        // Wait here for other player(s) to move into ready state
+        StartCoroutine("WaitForSigOReady");
+        // If we're the master client:
+            // Refresh the game state for both players:
+                // Query OPlayer for game state and 
+                // update OPlayer on our game state
+                // Roll dice for both players and notify OPlayer of the results
+                // Then move to P_UNTAP or O_UNTAP depending on who goes first
     }
 
     private void PUntap(Dictionary<string, object> parms) {
