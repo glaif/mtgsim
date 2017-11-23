@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public class NetworkPlayerScript : Photon.MonoBehaviour/*, IPunObservable*/ {
-    // The PUN loglevel
+public class NetworkPlayerScript : Photon.MonoBehaviour {
     public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
 
     private MainGameScript mgSC;
+    private PlayerScript playerSC;
 
     private int msgNum = 0;
 
@@ -26,10 +26,13 @@ public class NetworkPlayerScript : Photon.MonoBehaviour/*, IPunObservable*/ {
             Debug.LogError("Cannot find Main Game SC");
         }
 
-        if (photonView.isMine == true) {
-            photonView.RPC("ChatMessage", PhotonTargets.OthersBuffered, PhotonNetwork.player.NickName, "Hello!");
-            photonView.RPC("Ready", PhotonTargets.OthersBuffered, null);
+        playerSC = mgSC.LocalPlayerGO.GetComponent<PlayerScript>();
+        if (playerSC == null) {
+            Debug.LogError("Error null player SC object");
+            return;
         }
+
+        playerSC.netPlayerSC = this;
 
         if (PhotonNetwork.isMasterClient) {
             // Notify the game that we are the master client
@@ -42,18 +45,16 @@ public class NetworkPlayerScript : Photon.MonoBehaviour/*, IPunObservable*/ {
 
     }
 
-    [PunRPC]
-    void Ready() {
-        mgSC.SigOReady();
+    public void SendReady() {
+        Debug.Log("Sending ready by " + PhotonNetwork.player.NickName + " (ID: " + PhotonNetwork.player.ID + ")");
+        photonView.RPC("Ready", PhotonTargets.OthersBuffered, PhotonNetwork.player.NickName, PhotonNetwork.player.ID);
     }
 
     [PunRPC]
-    void ChatMessage(string a, string b) {
-        Debug.Log(string.Format("ChatMessage (ID: {0}) {1} {2} {3}", PhotonNetwork.player.ID, a, b, msgNum));
-        msgNum++;
+    void Ready(string name, int id) {
+        Debug.Log(string.Format("Ready sent by {0} (ID: {1}), received by {2} (ID: {3}) ", name, id, PhotonNetwork.player.NickName, PhotonNetwork.player.ID));
+        if (photonView.isMine == true) {
+            mgSC.SigOReady();
+        }
     }
-
-    //public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-    //    Debug.Log("OnPhotonSerializeView called");
-    //}
 }

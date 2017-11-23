@@ -4,6 +4,8 @@ public class PlayerScript : MonoBehaviour {
     public DeckScript deckSC;
     public HandScript handSC;
 
+    public NetworkPlayerScript netPlayerSC { get; set; }
+
     //private GameObject playerGO;
     private Deck deck;
     private Hand hand;
@@ -45,5 +47,13 @@ public class PlayerScript : MonoBehaviour {
     private void InitializeHand() {
         hand = new Hand();
         handSC.InitializeHand(hand);
+    }
+
+    public void SendReady() {
+        // Ultimately this will have to handle both the single and multi-player
+        // cases.  For now, we just assume multi-player.  In the future, 
+        // we should probably create a parent class that abstracts both
+        // network and ai opponents.
+        netPlayerSC.SendReady();
     }
 }

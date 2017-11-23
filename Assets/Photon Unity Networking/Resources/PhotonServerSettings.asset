@@ -44,4 +44,5 @@ MonoBehaviour:
   - RequestForPickupTimes
   - TaggedPlayer
   - RollDie
+  - Ready
   DisableAutoOpenWizard: 1

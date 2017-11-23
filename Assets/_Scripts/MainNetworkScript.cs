@@ -14,7 +14,6 @@ public class MainNetworkScript : Photon.PunBehaviour {
         PhotonNetwork.ConnectUsingSettings(GAME_VERSION);
     }
 	
-	// Update is called once per frame
 	void Update () {
 		
 	}
@@ -30,7 +29,6 @@ public class MainNetworkScript : Photon.PunBehaviour {
     public override void OnJoinedRoom() {
         Debug.Log("Joined Photon room");
         GameObject netPlayer = PhotonNetwork.Instantiate(netPlayerPrefab.name, netObjs.transform.position, Quaternion.identity, 0);
-        //netPlayer.transform.parent = netObjs.transform;
         conMessageGO.SetActive(false);
         dsGO.SetActive(true);
     }

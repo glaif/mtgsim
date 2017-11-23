@@ -66,16 +66,6 @@ public class MainGameScript : MonoBehaviour {
         }
     }
 
-    public void SigOReady() {
-        OReadySignalled = true;
-    }
-
-    private IEnumerator WaitForSigOReady() {
-        while (!OReadySignalled) {
-            yield return new WaitForSeconds(.1f);
-        }
-    }
-
     // Game State Machine Functions
 
     public int UpdateGameState(GameState state, Dictionary<string, object> newParms) {
@@ -92,23 +82,42 @@ public class MainGameScript : MonoBehaviour {
         return 0;
     }
 
+    // P_READY
     private void PReady(Dictionary<string, object> parms) {
         Debug.Log("PReady firing");
+        playerSC.SendReady();
         UpdateGameState(GameState.O_READY, null);
+    }
+
+    // O_READY
+    public void SigOReady() {
+        OReadySignalled = true;
+    }
+
+    private IEnumerator WaitForSigOReady() {
+        while (!OReadySignalled) {
+            yield return new WaitForSeconds(.1f);
+        }
+        Debug.Log("OReady done");
+
+        // If we're the master client:
+            // Refresh the game state for both players:
+                // Query OPlayer for game state and 
+                // update OPlayer on our game state
+            // Roll dice for both players and notify OPlayer of the results
+            // Then move to P_UNTAP or O_UNTAP depending on who goes first
+        // Otherwise, OPlayer will initiate the state changes
+
+        //UpdateGameState(GameState.O_READY, null);
     }
 
     private void OReady(Dictionary<string, object> parms) {
         Debug.Log("OReady firing");
         // Wait here for other player(s) to move into ready state
         StartCoroutine("WaitForSigOReady");
-        // If we're the master client:
-            // Refresh the game state for both players:
-                // Query OPlayer for game state and 
-                // update OPlayer on our game state
-                // Roll dice for both players and notify OPlayer of the results
-                // Then move to P_UNTAP or O_UNTAP depending on who goes first
     }
 
+    // P_UNTAP
     private void PUntap(Dictionary<string, object> parms) {
         Debug.Log("PUntap firing");
         // Untap all tapped cards
