@@ -8,6 +8,9 @@ public class MainMenuScript : MonoBehaviour {
     public InputField usernameIF;
     public MainGameScript mainGameSC;
     public MainNetworkScript mainNetSC;
+    public GameObject aiPlayerPrefab;
+    public GameObject aiObjs;
+
 
     static string playerNamePrefKey = "PlayerName";
 
@@ -35,6 +38,7 @@ public class MainMenuScript : MonoBehaviour {
     public void StartGameClick() {
         SetPlayerName();
         mmGO.SetActive(false);
+        GameObject aiPlayer = Instantiate(aiPlayerPrefab, aiObjs.transform.position, Quaternion.identity);
         dsGO.SetActive(true);
     }
 

@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
-    public GameObject playerPrefab;
-    public GameObject LocalPlayerGO { get; private set; }
+    //public GameObject playerPrefab;
+    public GameObject PlayerGO;
+    public GameObject Opponent1GO;
+    public GameObject Opponent2GO;
+    public GameObject Opponent3GO;
 
-    public GameObject MasterPlayerGO { get; set; }
+    [SerializeField]
+    private PlayerScript playerSC;
+
+    public GameObject MasterNetPlayerGO { get; set; }
 
     public GameObject popupGO;     // Reference to reusable modal popup window GO
     public PUModalScript popupSC;  // Reference to reusable modal popup window script
 
-    private PlayerScript playerSC;
+    
 
     private bool OReadySignalled = false;
 
@@ -20,12 +26,12 @@ public class MainGameScript : MonoBehaviour {
     }
 
     void Start() {
-        GameObject battleGroundGO = gameObject; // This is not strictly necessary, but is more clear
-        LocalPlayerGO = Instantiate(playerPrefab, battleGroundGO.transform);
-        if (LocalPlayerGO == null) {
-            Debug.LogError("Error getting player GO");
-        }
-        playerSC = LocalPlayerGO.GetComponent<PlayerScript>();
+        //GameObject battleGroundGO = gameObject; // This is not strictly necessary, but is more clear
+        //LocalPlayerGO = Instantiate(playerPrefab, battleGroundGO.transform);
+        //if (LocalPlayerGO == null) {
+        //    Debug.LogError("Error getting player GO");
+        //}
+        playerSC = PlayerGO.GetComponent<PlayerScript>();
         if (playerSC == null) {
             Debug.LogError("Error null player SC object");
             return;

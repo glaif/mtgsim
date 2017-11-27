@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class NetworkPlayerScript : Photon.MonoBehaviour {
+public class NetworkPlayerComScript : Photon.MonoBehaviour, IPlayer {
     public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
 
     private MainGameScript mgSC;
@@ -26,18 +26,18 @@ public class NetworkPlayerScript : Photon.MonoBehaviour {
             Debug.LogError("Cannot find Main Game SC");
         }
 
-        playerSC = mgSC.LocalPlayerGO.GetComponent<PlayerScript>();
+        playerSC = mgSC.PlayerGO.GetComponent<PlayerScript>();
         if (playerSC == null) {
             Debug.LogError("Error null player SC object");
             return;
         }
 
-        playerSC.netPlayerSC = this;
+        playerSC.NetPlayerSC = this;
 
         if (PhotonNetwork.isMasterClient) {
             // Notify the game that we are the master client
             Debug.Log("Setting master client: " + PhotonNetwork.player.ID);
-            mgSC.MasterPlayerGO = this.gameObject;
+            mgSC.MasterNetPlayerGO = this.gameObject;
         }
     }
 

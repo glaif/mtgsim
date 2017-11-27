@@ -4,8 +4,33 @@ public class PlayerScript : MonoBehaviour {
     public DeckScript deckSC;
     public HandScript handSC;
 
-    public NetworkPlayerScript netPlayerSC { get; set; }
+    public NetworkPlayerComScript NetPlayerSC {
+        get { return netPlayerSC; }
+        set {
+            netPlayerSC = value;
 
+            if (playerComSC != null)
+                Debug.LogError("Trying to set playerComSC a second time!");
+
+            playerComSC = value;
+        }
+    }
+
+    public AIPlayerComScript AIPlayerSC {
+        get { return aiPlayerSC; }
+        set {
+            aiPlayerSC = value;
+
+            if (playerComSC != null )
+                Debug.LogError("Trying to set playerComSC a second time!");
+
+            playerComSC = value;
+        }
+    }
+
+    private IPlayer playerComSC;
+    private NetworkPlayerComScript netPlayerSC;
+    private AIPlayerComScript aiPlayerSC;
     //private GameObject playerGO;
     private Deck deck;
     private Hand hand;
@@ -50,10 +75,6 @@ public class PlayerScript : MonoBehaviour {
     }
 
     public void SendReady() {
-        // Ultimately this will have to handle both the single and multi-player
-        // cases.  For now, we just assume multi-player.  In the future, 
-        // we should probably create a parent class that abstracts both
-        // network and ai opponents.
-        netPlayerSC.SendReady();
+        playerComSC.SendReady();
     }
 }

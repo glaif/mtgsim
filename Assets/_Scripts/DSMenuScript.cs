@@ -14,7 +14,7 @@ public class DSMenuScript : MonoBehaviour {
         // Is there a possible race condition here?
         // Can LocalPlayer be null if mainGameSC is behind
         // this script?
-        GameObject localPlayer = mainGameSC.LocalPlayerGO;
+        GameObject localPlayer = mainGameSC.PlayerGO;
         if (localPlayer == null) {
             Debug.Log("Null localPlayer in SelectDeckClick");
             Debug.LogError("Error getting localPlayer from MainGameScript");
