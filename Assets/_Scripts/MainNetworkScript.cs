@@ -24,11 +24,16 @@ public class MainNetworkScript : Photon.PunBehaviour {
         ro.IsVisible = false;
         ro.MaxPlayers = 2;
         PhotonNetwork.JoinOrCreateRoom("MTG", ro, TypedLobby.Default);
+        /* */
     }
 
     public override void OnJoinedRoom() {
         Debug.Log("Joined Photon room");
         GameObject netPlayer = PhotonNetwork.Instantiate(netPlayerPrefab.name, netObjs.transform.position, Quaternion.identity, 0);
+        if (netPlayer == null) {
+            Debug.LogError("Error trying to instantiate a new Network Player GO");
+            return;
+        }
         conMessageGO.SetActive(false);
         dsGO.SetActive(true);
     }

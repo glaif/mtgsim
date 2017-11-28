@@ -6,8 +6,6 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour, IPlayer {
     private MainGameScript mgSC;
     private PlayerScript playerSC;
 
-    private int msgNum = 0;
-
     void Start() {
         Debug.Log("Starting NetworkPlayerScript");
         GameObject netObjsGO = GameObject.Find("Network Objects");

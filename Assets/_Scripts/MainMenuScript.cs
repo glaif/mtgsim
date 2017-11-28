@@ -39,6 +39,10 @@ public class MainMenuScript : MonoBehaviour {
         SetPlayerName();
         mmGO.SetActive(false);
         GameObject aiPlayer = Instantiate(aiPlayerPrefab, aiObjs.transform.position, Quaternion.identity);
+        if (aiPlayer == null) {
+            Debug.LogError("Error trying to instantiate a new AI Player GO");
+            return;
+        }
         dsGO.SetActive(true);
     }
 
