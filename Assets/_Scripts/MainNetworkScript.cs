@@ -6,6 +6,7 @@ public class MainNetworkScript : Photon.PunBehaviour {
     public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
     public GameObject dsGO;
     public GameObject conMessageGO;
+    public MainGameScript mgSC;
 
     private string GAME_VERSION = "v0.2";
 

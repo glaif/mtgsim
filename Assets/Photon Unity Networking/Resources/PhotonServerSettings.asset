@@ -46,4 +46,5 @@ MonoBehaviour:
   - RollDie
   - Ready
   - SetMasterClient
+  - PrepStartGame
   DisableAutoOpenWizard: 1

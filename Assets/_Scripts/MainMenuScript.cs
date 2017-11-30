@@ -5,18 +5,24 @@ public class MainMenuScript : MonoBehaviour {
     public GameObject mmGO;
     public GameObject dsGO;
     public GameObject conMessageGO;
+    public GameObject wfpGO;
     public InputField usernameIF;
     public MainGameScript mainGameSC;
     public MainNetworkScript mainNetSC;
-    public GameObject aiPlayerPrefab;
-    public GameObject aiObjs;
+    public MainAIScript mainAiSC;
 
 
     static string playerNamePrefKey = "PlayerName";
 
     void Start() {
+        // Turn off UI components that are not needed
         conMessageGO.SetActive(false);
+        wfpGO.SetActive(false);
+        
+        // Turn on this menu
         mmGO.SetActive(true);
+
+        // Prepopulate the username field, with the last username given
         SetDefaultUserName();
     }
 
@@ -38,12 +44,19 @@ public class MainMenuScript : MonoBehaviour {
     public void StartGameClick() {
         SetPlayerName();
         mmGO.SetActive(false);
-        GameObject aiPlayer = Instantiate(aiPlayerPrefab, aiObjs.transform.position, Quaternion.identity);
-        if (aiPlayer == null) {
-            Debug.LogError("Error trying to instantiate a new AI Player GO");
-            return;
-        }
+        EnableLocalPlay();
         dsGO.SetActive(true);
+    }
+
+    public void StartNetworkGameClick() {
+        SetPlayerName();
+        mmGO.SetActive(false);
+        conMessageGO.SetActive(true);
+        EnableNetworkPlay();
+    }
+
+    public void ImportDeckClick() {
+        Debug.Log("ImportDeckClick fired");
     }
 
     private void SetDefaultUserName() {
@@ -55,25 +68,18 @@ public class MainMenuScript : MonoBehaviour {
         PhotonNetwork.playerName = defaultName;
     }
 
-    public void SetPlayerName() {
+    private void SetPlayerName() {
         // force a trailing space string in case value is an empty 
         // string, else playerName would not be updated.
         PhotonNetwork.playerName = usernameIF.text;
         PlayerPrefs.SetString(playerNamePrefKey, usernameIF.text);
     }
 
-    public void StartNetworkGameClick() {
-        SetPlayerName();
-        mmGO.SetActive(false);
-        conMessageGO.SetActive(true);
-        EnableNetworking();
+    private void EnableLocalPlay() {
+        mainAiSC.enabled = true;
     }
 
-    public void ImportDeckClick() {
-        Debug.Log("ImportDeckClick fired");
-    }
-
-    private void EnableNetworking() {
+    private void EnableNetworkPlay() {
         mainNetSC.enabled = true;
     }
 }

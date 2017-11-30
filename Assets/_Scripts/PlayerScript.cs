@@ -4,6 +4,8 @@ public class PlayerScript : MonoBehaviour {
     public DeckScript deckSC;
     public HandScript handSC;
 
+    public MainGameScript mgSC;
+
     public NetworkPlayerComScript NetPlayerSC {
         get { return netPlayerSC; }
         set {
@@ -36,8 +38,7 @@ public class PlayerScript : MonoBehaviour {
     private Hand hand;
 
     void Start () {
-        //string deckName = PlayerPrefs.GetString("Player deck", "New deck");
-        //playerGO = gameObject;
+
     }
 
     void Update() {
@@ -47,6 +48,17 @@ public class PlayerScript : MonoBehaviour {
     public void PrepStartGame(string deckName) {
         // Do all the pre game stuff that needs to happen to get this player ready to start
         InitializeDeck(deckName);
+    }
+
+    public void StartGame(string deckName) {
+        InitializeHand();
+        // Now wait for player(s) to join if they haven't already
+        SendStartGame(deck.GetDeckCount());
+    }
+
+    public void StartGame(int cardCount) {
+        // Do all the pre game stuff that needs to happen to get this opponent ready to start
+        InitializeDeck(Deck.OpponentDeckStr, cardCount);
         InitializeHand();
     }
 
@@ -61,8 +73,8 @@ public class PlayerScript : MonoBehaviour {
         return curCount;
     }
 
-    private void InitializeDeck(string deckName) {
-        deck = new Deck(deckName);
+    private void InitializeDeck(string deckName, int cardCount=0) {
+        deck = new Deck(deckName, cardCount);
         if (deck == null) {
             Debug.LogError("InitializeDeck() called with null deck");
         }
@@ -76,5 +88,9 @@ public class PlayerScript : MonoBehaviour {
 
     public void SendReady() {
         playerComSC.SendReady();
+    }
+
+    public void SendStartGame(int cardCount) {
+        playerComSC.SendStartGame(cardCount);
     }
 }

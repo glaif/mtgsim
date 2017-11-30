@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AIPlayerComScript : MonoBehaviour, IPlayer {
 
@@ -41,5 +39,9 @@ public class AIPlayerComScript : MonoBehaviour, IPlayer {
 
     public void SendReady() {
         Debug.Log("Send ready called in AI Player SC");
+    }
+
+    public void SendStartGame(int cardCount) {
+        Debug.Log("Send StartGame called in AI Player SC");
     }
 }

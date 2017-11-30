@@ -64,28 +64,34 @@ public class DeckScript : MonoBehaviour {
         List<Card> cardsDrawn = deck.GetNextNCards(drawCount);
         
         for (int i = 0; i < cardsDrawn.Count; i++) {
-            GameObject c = Instantiate(CardPrefab, handGO.transform);
+            string cardSkinStr = "Cards/" + cardsDrawn[i].SetCode + "/" + cardsDrawn[i].Id.ToString();
+            GameObject c = PlaceCardInHand(cardSkinStr);
             cardsDrawn[i].CardPrefabInst = c;
             c.GetComponent<CardScript>().Card = cardsDrawn[i];
-
-            //Texture cardSkin = (Texture)Resources.Load("Cards/1347");
-            string cardSkinStr = "Cards/" + cardsDrawn[i].SetCode + "/" + cardsDrawn[i].Id.ToString();
-            Texture cardSkin = (Texture)Resources.Load(cardSkinStr);
-            if (cardSkin == null) {
-                Debug.LogError("Error loading card skin");
-                Debug.Log("card: " + cardsDrawn[i].ToString());
-                Debug.Log("card skin string: " + cardSkinStr);
-                return;
-            }
-            Material cardMat = new Material(Shader.Find("Unlit/Transparent"));
-            cardMat.SetTexture("_MainTex", cardSkin);
-            c.GetComponentInChildren<Renderer>().material = cardMat;
         }
 
         handSC.AddCardsToHand(cardsDrawn);
 
+        SetDeckCardsRemaining(deck.GetDeckCount());
+    }
+
+    public GameObject PlaceCardInHand(string cardSkinStr) {
+        GameObject c = Instantiate(CardPrefab, handGO.transform);
+        Texture cardSkin = (Texture)Resources.Load(cardSkinStr);
+        if (cardSkin == null) {
+            Debug.LogError("Error loading card skin");
+            Debug.Log("card skin string: " + cardSkinStr);
+            return null;
+        }
+        Material cardMat = new Material(Shader.Find("Unlit/Transparent"));
+        cardMat.SetTexture("_MainTex", cardSkin);
+        c.GetComponentInChildren<Renderer>().material = cardMat;
+        return c;
+    }
+
+    public void SetDeckCardsRemaining(int count) {
         gameObject.GetComponentInChildren<TextMesh>().text =
-            string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
+            string.Format("Cards\nRemaining: {0}", count);
     }
 
     public void ReplaceCardOnDeck(Card c) {

@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class DSMenuScript : MonoBehaviour {
     public GameObject dsGO;
-    public MainGameScript mainGameSC;
+    public GameObject wfpGO;
+    public MainGameScript mgSC;
     public Text ddText;
 
     void Start() {
@@ -11,10 +13,9 @@ public class DSMenuScript : MonoBehaviour {
     }
 	
     public void SelectDeckClick() {
-        // Is there a possible race condition here?
-        // Can LocalPlayer be null if mainGameSC is behind
-        // this script?
-        GameObject localPlayer = mainGameSC.PlayerGO;
+        dsGO.SetActive(false);
+        // Set a waiting for player message...
+        GameObject localPlayer = mgSC.PlayerGO;
         if (localPlayer == null) {
             Debug.Log("Null localPlayer in SelectDeckClick");
             Debug.LogError("Error getting localPlayer from MainGameScript");
@@ -35,8 +36,7 @@ public class DSMenuScript : MonoBehaviour {
         playerSC.PrepStartGame(deckName);
 
         // Start game state machine
-        dsGO.SetActive(false);
-        mainGameSC.UpdateGameState(MainGameScript.GameState.DEAL, null);
+        //mgSC.UpdateGameState(MainGameScript.GameState.DEAL, null);
     }
 
     public void CancelClick() {

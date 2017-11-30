@@ -15,16 +15,17 @@ public class HandScript : MonoBehaviour {
     }
 
     public void AddCardsToHand(List<Card> cards) {
-        float i = hand.CardCount();
-        foreach (Card card in cards) {
-            hand.AddCardToHand(card);
-            card.CardPrefabInst.transform.position =
-                new Vector3(
-                    card.CardPrefabInst.transform.position.x + (i*1.51f),
-                    card.CardPrefabInst.transform.position.y,
-                    card.CardPrefabInst.transform.position.z);
-            i += 1f;
-        }
+        foreach (Card card in cards)
+            AddCardToHand(card);
+    }
+
+    public void AddCardToHand(Card card) {
+        card.CardPrefabInst.transform.position =
+            new Vector3(
+                card.CardPrefabInst.transform.position.x + (hand.CardCount() * 1.51f),
+                card.CardPrefabInst.transform.position.y,
+                card.CardPrefabInst.transform.position.z);
+        hand.AddCardToHand(card);
     }
 
     public void RecycleHand() {
