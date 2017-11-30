@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainAIScript : MonoBehaviour {
-    public GameObject aiPlayerPrefab;
+    [SerializeField]
+    private GameObject aiPlayerPrefab;
 
+    [SerializeField]
     private GameObject aiObjs;
 
     // Use this for initialization

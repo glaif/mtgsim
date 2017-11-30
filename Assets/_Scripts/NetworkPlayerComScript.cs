@@ -34,8 +34,7 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour, IPlayer {
         if (photonView.isMine == true) {
             // If this is a local network player, get the playerGO & SC
             // from the Main Game SC
-            playerGO = mgSC.PlayerGO;
-            playerSC = mgSC.PlayerGO.GetComponent<PlayerScript>();
+            playerSC = mgSC.playerSC;
             if (playerSC == null) {
                 Debug.LogError("Error null player SC object");
                 return;
@@ -46,7 +45,7 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour, IPlayer {
         } else {
             // If this is a remote network player, set the playerGO & SC
             // to the next available Opponent GO & SC from the Main Game SC
-            opponentGO = mgSC.GetNextAvailOpponentGO();
+            opponentGO = mgSC.AddOpponent(PhotonNetwork.player.NickName);
             Debug.Log("Got opponentGO in NetworkPlayerComScript::start: " + opponentGO.name);
             if (opponentGO == null) {
                 Debug.LogError("Cannot get an available Opponent GO");
@@ -105,7 +104,7 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour, IPlayer {
 
             if (opponentSC == null)
                 Debug.LogError("Null opponentSC inside RPC NetworkPlayerComScript::PrepStartGame");
-            opponentSC.StartGame(cardCount);
+            //opponentSC.StartGame();
         }
     }
 

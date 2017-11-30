@@ -3,7 +3,6 @@
 public class PlayerScript : MonoBehaviour {
     public DeckScript deckSC;
     public HandScript handSC;
-
     public MainGameScript mgSC;
 
     public NetworkPlayerComScript NetPlayerSC {
@@ -30,35 +29,24 @@ public class PlayerScript : MonoBehaviour {
         }
     }
 
+    public string DeckName { get; set; }
+
     private IPlayer playerComSC;
     private NetworkPlayerComScript netPlayerSC;
     private AIPlayerComScript aiPlayerSC;
-    //private GameObject playerGO;
+
     private Deck deck;
     private Hand hand;
 
-    void Start () {
-
-    }
-
-    void Update() {
-        
-    }
-
-    public void PrepStartGame(string deckName) {
+    public void PrepStartGame(int cardCount=0) {
         // Do all the pre game stuff that needs to happen to get this player ready to start
-        InitializeDeck(deckName);
-    }
-
-    public void StartGame(string deckName) {
-        InitializeHand();
-        // Now wait for player(s) to join if they haven't already
-        SendStartGame(deck.GetDeckCount());
-    }
-
-    public void StartGame(int cardCount) {
-        // Do all the pre game stuff that needs to happen to get this opponent ready to start
-        InitializeDeck(Deck.OpponentDeckStr, cardCount);
+        if (cardCount > 0) {
+            // Player path
+            InitializeDeck(DeckName);
+        } else {
+            // Opponent path
+            InitializeDeck(Deck.OpponentDeckStr, cardCount);
+        }
         InitializeHand();
     }
 
@@ -85,6 +73,9 @@ public class PlayerScript : MonoBehaviour {
         hand = new Hand();
         handSC.InitializeHand(hand);
     }
+
+
+    // Callbacks to Main Game Script
 
     public void SendReady() {
         playerComSC.SendReady();

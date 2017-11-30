@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainGameScript : MonoBehaviour {
-    //public GameObject playerPrefab;
-    public GameObject PlayerGO;
     public GameObject Opponent1GO;
     public GameObject Opponent2GO;
     public GameObject Opponent3GO;
@@ -13,49 +11,45 @@ public class MainGameScript : MonoBehaviour {
     public GameObject popupGO;     // Reference to reusable modal popup window GO
     public PUModalScript popupSC;  // Reference to reusable modal popup window script
 
+    public PlayerScript playerSC;
+
     [SerializeField]
-    private PlayerScript playerSC;
+    private MainNetworkScript netSC;
 
-    private List<GameObject> playersList;
+    private Dictionary<string, Opponent> opponentList;
 
-    private int numPlayers = 1;
+    private int numOpponents = 0;
+    private int desiredOpponents = 1; // TODO: needs to be set by UI
+
     private bool OReadySignalled = false;
 
     private GameState currentState;
     private Dictionary<string, object> stateParams;
 
-    public MainGameScript() {
-        InitializeTransitionArray();
-    }
-
     void Start() {
-        //GameObject battleGroundGO = gameObject; // This is not strictly necessary, but is more clear
-        //LocalPlayerGO = Instantiate(playerPrefab, battleGroundGO.transform);
-        //if (LocalPlayerGO == null) {
-        //    Debug.LogError("Error getting player GO");
-        //}
-
-        playerSC = PlayerGO.GetComponent<PlayerScript>();
-        if (playerSC == null) {
-            Debug.LogError("Error null player SC object");
-            return;
-        }
-
+        InitializeTransitionArray();
         currentState = GameState.JOIN;
     }
 
     void Update() {
-        // Once opponent connects roll d20
-        // Winner hosts state machine for the game
-        // Loser set up to receive state machine updates from winner
-        // For now, just one player so set things in motion
-
-        MainGameLoop();
+        // The Master Client executes the main game loop & state machine
+        if (netSC.enabled == false) {
+            MainGameLoop();
+            return;
+        }
+        if (netSC.MasterClient == true)
+            MainGameLoop();
     }
 
-    public GameObject GetNextAvailOpponentGO() {
+    public GameObject AddOpponent(string PlayerName) {
+        GameObject newOpponent = GetNextAvailOpponentGO();
+        opponentList.Add(PlayerName, new Opponent(PlayerName, newOpponent));
+        return newOpponent;
+    }
+
+    private GameObject GetNextAvailOpponentGO() {
         GameObject resGO = null;
-        switch (numPlayers) {
+        switch (numOpponents) {
             case 1:
                 resGO = Opponent1GO;
                 break;
@@ -70,7 +64,7 @@ public class MainGameScript : MonoBehaviour {
                 break;
         }
         if (resGO != null)
-            numPlayers++;
+            numOpponents++;
         return resGO;
     }
 
@@ -86,20 +80,33 @@ public class MainGameScript : MonoBehaviour {
         // TODO: Need to decouple the player objects from the
         // Main Network and Main AI Scripts.
         // TODO: Finish decoupling UI from game mechanics
-        currentState = UpdateGameState(currentState, ref stateParams);
+        currentState = UpdateGameState(currentState, stateParams);
 
     }
 
-    private GameState Join(ref Dictionary<string, object> parms) {
-        return new GameState();
+    private GameState Join(Dictionary<string, object> parms) {
+        if (numOpponents < desiredOpponents)
+            return GameState.JOIN;
+        return GameState.PREPSTART;
     }
 
-    private GameState PrepStart(ref Dictionary<string, object> parms) {
-        return new GameState();
+    private GameState PrepStart(Dictionary<string, object> parms) {
+        playerSC.PrepStartGame();
+
+        foreach (KeyValuePair<string, Opponent> opp in opponentList) {
+            opp.Value.opponentSC.PrepStartGame();
+        }
+
+        return GameState.ROLL;
+    }
+
+    private GameState Roll(Dictionary<string, object> parms) {
+
+        return GameState.DEAL;
     }
 
     // Do the deal cards logic - int count=7, bool mulligan=true
-    private GameState DealCards(ref Dictionary<string, object> parms) {
+    private GameState DealCards(Dictionary<string, object> parms) {
         if ((bool)parms["mulligan"]) {
             popupGO.SetActive(true);
 
@@ -118,14 +125,14 @@ public class MainGameScript : MonoBehaviour {
 
             // Call dealcards again, with 1 less card in hand
             stateParams = new Dictionary<string, object>() { { "count", curCount - 1 }, { "mulligan", true } };
-            UpdateGameState(GameState.DEAL, ref stateParams);
+            UpdateGameState(GameState.DEAL, stateParams);
         } else {
             Debug.Log("No mulligan chosen.  Setting state to P_READY");
-            UpdateGameState(GameState.P_READY, ref stateParams);
+            UpdateGameState(GameState.P_READY, stateParams);
         }
     }
 
-    private GameState UpdateGameState(GameState state, ref Dictionary<string, object> newParms) {
+    private GameState UpdateGameState(GameState state, Dictionary<string, object> newParms) {
         // Turns: untap, upkeep, draw, main, combat, main, discard
         // Adjusts game state and synchronizes with remote player state machine
         Debug.Log("GameState changed to: " + state);
@@ -142,7 +149,7 @@ public class MainGameScript : MonoBehaviour {
     }
 
     // P_READY
-    private GameState PReady(ref Dictionary<string, object> parms) {
+    private GameState PReady(Dictionary<string, object> parms) {
         Debug.Log("PReady firing");
         playerSC.SendReady();
         UpdateGameState(GameState.O_READY, null);
@@ -171,7 +178,7 @@ public class MainGameScript : MonoBehaviour {
         //UpdateGameState(GameState.O_READY, null);
     }
 
-    private GameState OReady(ref Dictionary<string, object> parms) {
+    private GameState OReady(Dictionary<string, object> parms) {
         Debug.Log("OReady firing");
         // Wait here for other player(s) to move into ready state
         StartCoroutine("WaitForSigOReady");
@@ -179,7 +186,7 @@ public class MainGameScript : MonoBehaviour {
     }
 
     // P_UNTAP
-    private GameState PUntap(ref Dictionary<string, object> parms) {
+    private GameState PUntap(Dictionary<string, object> parms) {
         Debug.Log("PUntap firing");
         // Untap all tapped cards
         // Keep a tapped cards list in the player script object
@@ -188,56 +195,58 @@ public class MainGameScript : MonoBehaviour {
         return new GameState();
     }
 
-    private GameState OUntap(ref Dictionary<string, object> parms) {
+    private GameState OUntap(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState PUpkeep(ref Dictionary<string, object> parms) {
+    private GameState PUpkeep(Dictionary<string, object> parms) {
         Debug.Log("PUpkeep firing");
         // Check upkeep list for any upkeep requirements
         return new GameState();
     }
 
-    private GameState OUpkeep(ref Dictionary<string, object> parms) {
+    private GameState OUpkeep(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState PDraw(ref Dictionary<string, object> parms) {
+    private GameState PDraw(Dictionary<string, object> parms) {
         Debug.Log("PDraw firing");
         return new GameState();
     }
 
-    private GameState ODraw(ref Dictionary<string, object> parms) {
+    private GameState ODraw(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState PMain(ref Dictionary<string, object> parms) {
+    private GameState PMain(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState OMain(ref Dictionary<string, object> parms) {
+    private GameState OMain(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState PCombat(ref Dictionary<string, object> parms) {
+    private GameState PCombat(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState OCombat(ref Dictionary<string, object> parms) {
+    private GameState OCombat(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState PDiscard(ref Dictionary<string, object> parms) {
+    private GameState PDiscard(Dictionary<string, object> parms) {
         return new GameState();
     }
 
-    private GameState ODiscard(ref Dictionary<string, object> parms) {
+    private GameState ODiscard(Dictionary<string, object> parms) {
         return new GameState();
     }
 
     // State machine code starts here
     public enum GameState {
         JOIN,
+        PREPSTART,
+        ROLL,
         DEAL,
         P_READY,
         P_UNTAP,
@@ -255,13 +264,15 @@ public class MainGameScript : MonoBehaviour {
         O_DISCARD
     };
 
-    private delegate GameState Transition(ref Dictionary<string, object> parms);
+    private delegate GameState Transition(Dictionary<string, object> parms);
 
     private TransitionData[] transitionArray;
 
     private void InitializeTransitionArray() {
         transitionArray = new TransitionData[] {
             new TransitionData(Join, null),
+            new TransitionData(PrepStart, null),
+            new TransitionData(Roll, null),
             new TransitionData(DealCards, new Dictionary<string, object>() { { "count", 7 }, { "mulligan", true } }),
             new TransitionData(PReady, null),
             new TransitionData(PUntap, null),

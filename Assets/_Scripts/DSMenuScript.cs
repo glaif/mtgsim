@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class DSMenuScript : MonoBehaviour {
@@ -15,14 +14,7 @@ public class DSMenuScript : MonoBehaviour {
     public void SelectDeckClick() {
         dsGO.SetActive(false);
         // Set a waiting for player message...
-        GameObject localPlayer = mgSC.PlayerGO;
-        if (localPlayer == null) {
-            Debug.Log("Null localPlayer in SelectDeckClick");
-            Debug.LogError("Error getting localPlayer from MainGameScript");
-            Application.Quit();
-        }
-
-        PlayerScript playerSC = localPlayer.GetComponent<PlayerScript>();
+        PlayerScript playerSC = mgSC.playerSC;
         if (playerSC == null) {
             Debug.LogError("Unable to find Player GO");
             return;
@@ -33,7 +25,7 @@ public class DSMenuScript : MonoBehaviour {
 
         deckName = "deck1.txt";  // TEST CODE
 
-        playerSC.PrepStartGame(deckName);
+        playerSC.PrepStartGame();
 
         // Start game state machine
         //mgSC.UpdateGameState(MainGameScript.GameState.DEAL, null);

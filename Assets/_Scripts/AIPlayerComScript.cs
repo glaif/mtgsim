@@ -24,7 +24,7 @@ public class AIPlayerComScript : MonoBehaviour, IPlayer {
             Debug.LogError("Cannot find Main Game SC");
         }
 
-        playerSC = mgSC.PlayerGO.GetComponent<PlayerScript>();
+        playerSC = mgSC.playerSC;
         if (playerSC == null) {
             Debug.LogError("Error null player SC object");
             return;

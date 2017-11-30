@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311926, g: 0.38074008, b: 0.35872707, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311947, g: 0.38074005, b: 0.35872722, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -3198,7 +3198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deckSC: {fileID: 608333528}
   handSC: {fileID: 415724794}
-  mgSC: {fileID: 0}
+  mgSC: {fileID: 959149550}
 --- !u!1 &853768181
 GameObject:
   m_ObjectHideFlags: 0
@@ -3264,8 +3264,7 @@ Transform:
 --- !u!114 &887755750
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114333736500850000, guid: 6d8be180616b7ce4ca660c273983d48c,
-    type: 2}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 887755748}
   m_Enabled: 1
@@ -3618,13 +3617,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22449bb33c37ee54c941e4ae6b9bc78c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerGO: {fileID: 887755748}
   Opponent1GO: {fileID: 1449258319}
   Opponent2GO: {fileID: 786711856}
   Opponent3GO: {fileID: 972859985}
   popupGO: {fileID: 52532104}
   popupSC: {fileID: 52532109}
   playerSC: {fileID: 887755750}
+  netSC: {fileID: 959149551}
 --- !u!114 &959149551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3656,6 +3655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aiPlayerPrefab: {fileID: 1488952015761498, guid: f774cbda32771fd47b770877841483bd,
     type: 2}
+  aiObjs: {fileID: 29484305}
 --- !u!1 &972859985
 GameObject:
   m_ObjectHideFlags: 0
@@ -3702,7 +3702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deckSC: {fileID: 226475807}
   handSC: {fileID: 265019594}
-  mgSC: {fileID: 0}
+  mgSC: {fileID: 959149550}
 --- !u!1 &981948731
 GameObject:
   m_ObjectHideFlags: 0
@@ -4240,7 +4240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deckSC: {fileID: 541351618}
   handSC: {fileID: 566532977}
-  mgSC: {fileID: 0}
+  mgSC: {fileID: 959149550}
 --- !u!1 &1475932636
 GameObject:
   m_ObjectHideFlags: 0
@@ -5645,7 +5645,7 @@ MonoBehaviour:
   usernameIF: {fileID: 327489365}
   mainGameSC: {fileID: 959149550}
   mainNetSC: {fileID: 959149551}
-  mainAiSC: {fileID: 0}
+  mainAiSC: {fileID: 959149552}
 --- !u!4 &1928698271
 Transform:
   m_ObjectHideFlags: 0

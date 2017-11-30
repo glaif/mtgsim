@@ -8,11 +8,13 @@ public class MainNetworkScript : Photon.PunBehaviour {
     public GameObject conMessageGO;
     public MainGameScript mgSC;
 
+    public bool MasterClient { get; private set; }
+
     private string GAME_VERSION = "v0.2";
 
     void Start () {
         PhotonNetwork.logLevel = Loglevel;
-        PhotonNetwork.ConnectUsingSettings(GAME_VERSION);
+        PhotonNetwork.ConnectUsingSettings(GAME_VERSION);;
     }
 	
 	void Update () {
@@ -35,6 +37,7 @@ public class MainNetworkScript : Photon.PunBehaviour {
             Debug.LogError("Error trying to instantiate a new Network Player GO");
             return;
         }
+        MasterClient = PhotonNetwork.isMasterClient == true;
         conMessageGO.SetActive(false);
         dsGO.SetActive(true);
     }
