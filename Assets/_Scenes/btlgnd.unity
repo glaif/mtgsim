@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311947, g: 0.38074005, b: 0.35872722, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311926, g: 0.38074008, b: 0.35872707, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -286,7 +286,7 @@ GameObject:
   - component: {fileID: 35675732}
   - component: {fileID: 35675731}
   m_Layer: 5
-  m_Name: StartGameButton
+  m_Name: StartLocalGameButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -351,7 +351,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1928698270}
-        m_MethodName: StartGameClick
+        m_MethodName: StartLocalGameClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -602,7 +602,6 @@ GameObject:
   - component: {fileID: 52532108}
   - component: {fileID: 52532107}
   - component: {fileID: 52532106}
-  - component: {fileID: 52532109}
   m_Layer: 5
   m_Name: PopupModal
   m_TagString: PopupModal
@@ -686,17 +685,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &52532109
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 52532104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a849b07f6dab3344dae7fd7ac5ed1b62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &69085706
 GameObject:
   m_ObjectHideFlags: 0
@@ -1618,7 +1606,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 52532109}
+      - m_Target: {fileID: 1928698272}
         m_MethodName: OnCancelClicked
         m_Mode: 1
         m_Arguments:
@@ -3621,7 +3609,7 @@ MonoBehaviour:
   Opponent2GO: {fileID: 786711856}
   Opponent3GO: {fileID: 972859985}
   popupGO: {fileID: 52532104}
-  popupSC: {fileID: 52532109}
+  popupSC: {fileID: 1928698272}
   playerSC: {fileID: 887755750}
   netSC: {fileID: 959149551}
 --- !u!114 &959149551
@@ -5605,6 +5593,7 @@ GameObject:
   - component: {fileID: 1928698271}
   - component: {fileID: 1928698270}
   - component: {fileID: 1928698269}
+  - component: {fileID: 1928698272}
   m_Layer: 0
   m_Name: UI
   m_TagString: Untagged
@@ -5626,6 +5615,7 @@ MonoBehaviour:
   dsGO: {fileID: 417163244}
   wfpGO: {fileID: 765422469}
   mgSC: {fileID: 959149550}
+  playerSC: {fileID: 887755750}
   ddText: {fileID: 34418603}
 --- !u!114 &1928698270
 MonoBehaviour:
@@ -5643,7 +5633,7 @@ MonoBehaviour:
   conMessageGO: {fileID: 1758775078}
   wfpGO: {fileID: 765422469}
   usernameIF: {fileID: 327489365}
-  mainGameSC: {fileID: 959149550}
+  mgSC: {fileID: 959149550}
   mainNetSC: {fileID: 959149551}
   mainAiSC: {fileID: 959149552}
 --- !u!4 &1928698271
@@ -5664,6 +5654,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1928698272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1928698268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a849b07f6dab3344dae7fd7ac5ed1b62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puGO: {fileID: 52532104}
+  puModalTextGO: {fileID: 240547078}
 --- !u!1 &1950216879
 GameObject:
   m_ObjectHideFlags: 0
@@ -5740,7 +5743,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 52532109}
+      - m_Target: {fileID: 1928698272}
         m_MethodName: OnAcceptClicked
         m_Mode: 1
         m_Arguments:

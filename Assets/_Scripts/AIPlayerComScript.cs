@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 
-public class AIPlayerComScript : MonoBehaviour, IPlayer {
+public class AIPlayerComScript : MonoBehaviour {
 
     private MainGameScript mgSC;
-    private PlayerScript playerSC;
+
+    private GameObject playerGO = null;
+    private PlayerScript playerSC = null;
+
+    private GameObject opponentGO = null;
+    private PlayerScript opponentSC = null;
 
     void Start () {
         Debug.Log("AI Player loaded");
@@ -30,18 +35,28 @@ public class AIPlayerComScript : MonoBehaviour, IPlayer {
             return;
         }
 
-        playerSC.AIPlayerSC = this;
-    }
-	
-	void Update () {
-		
-	}
+        //playerSC.AIPlayerSC = this;
 
-    public void SendReady() {
-        Debug.Log("Send ready called in AI Player SC");
+        opponentGO = mgSC.AddOpponent("AI-" + (mgSC.NumOpponents+1));
+        Debug.Log("Got opponentGO in NetworkPlayerComScript::start: " + opponentGO.name);
+        if (opponentGO == null) {
+            Debug.LogError("Cannot get an available Opponent GO");
+        }
+
+        opponentSC = opponentGO.GetComponent<PlayerScript>();
+        if (opponentSC == null) {
+            Debug.LogError("Error null Opponent SC object");
+            return;
+        }
+
+        opponentSC.DeckName = Deck.OpponentDeckStr;
     }
 
-    public void SendStartGame(int cardCount) {
-        Debug.Log("Send StartGame called in AI Player SC");
-    }
+    //public void SendReady() {
+    //    Debug.Log("Send ready called in AI Player SC");
+    //}
+
+    //public void SendStartGame(int cardCount) {
+    //    Debug.Log("Send StartGame called in AI Player SC");
+    //}
 }

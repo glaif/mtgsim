@@ -2,17 +2,17 @@
 using UnityEngine.UI;
 
 public class MainMenuScript : MonoBehaviour {
+    private const string playerNamePrefKey = "PlayerName";
+
     public GameObject mmGO;
     public GameObject dsGO;
     public GameObject conMessageGO;
     public GameObject wfpGO;
     public InputField usernameIF;
-    public MainGameScript mainGameSC;
+    public MainGameScript mgSC;
     public MainNetworkScript mainNetSC;
     public MainAIScript mainAiSC;
 
-
-    static string playerNamePrefKey = "PlayerName";
 
     void Start() {
         // Turn off UI components that are not needed
@@ -41,10 +41,11 @@ public class MainMenuScript : MonoBehaviour {
         //}
     }
 
-    public void StartGameClick() {
+    public void StartLocalGameClick() {
         SetPlayerName();
         mmGO.SetActive(false);
         EnableLocalPlay();
+        mgSC.PlayerComSC = mainAiSC;
         dsGO.SetActive(true);
     }
 
@@ -53,6 +54,7 @@ public class MainMenuScript : MonoBehaviour {
         mmGO.SetActive(false);
         conMessageGO.SetActive(true);
         EnableNetworkPlay();
+        mgSC.PlayerComSC = mainNetSC;
     }
 
     public void ImportDeckClick() {

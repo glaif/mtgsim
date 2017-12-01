@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 
-public interface IPlayer {
+public interface IPlayerCom {
 
     void SendReady();
+
+    void SendPrepStart();
 
     void SendStartGame(int cardCount);
 

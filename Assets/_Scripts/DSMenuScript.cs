@@ -5,6 +5,7 @@ public class DSMenuScript : MonoBehaviour {
     public GameObject dsGO;
     public GameObject wfpGO;
     public MainGameScript mgSC;
+    public PlayerScript playerSC;
     public Text ddText;
 
     void Start() {
@@ -13,22 +14,13 @@ public class DSMenuScript : MonoBehaviour {
 	
     public void SelectDeckClick() {
         dsGO.SetActive(false);
-        // Set a waiting for player message...
-        PlayerScript playerSC = mgSC.playerSC;
-        if (playerSC == null) {
-            Debug.LogError("Unable to find Player GO");
-            return;
-        }
 
         string deckName = ddText.text;
         Debug.Log(string.Format("Deck selected: {0}", ddText.text));
 
         deckName = "deck1.txt";  // TEST CODE
-
-        playerSC.PrepStartGame();
-
-        // Start game state machine
-        //mgSC.UpdateGameState(MainGameScript.GameState.DEAL, null);
+        playerSC.DeckName = deckName;
+        mgSC.DeckSelected = true;
     }
 
     public void CancelClick() {

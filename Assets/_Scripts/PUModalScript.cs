@@ -2,22 +2,16 @@
 using UnityEngine.UI;
 
 public class PUModalScript : MonoBehaviour {
+    [SerializeField]
     private GameObject puGO;
+
+    [SerializeField]
     private GameObject puModalTextGO;
     private PUResponse resFunction;
 
     public delegate void PUResponse(bool response);
 
     void Start() {
-        puGO = GameObject.FindGameObjectWithTag("PopupModal");
-        if (puGO == null) {
-            Debug.Log("Null GameObject reference for PopupModal");
-            Application.Quit();
-        }
-        UIGORegistry.Register(puGO.gameObject);
-
-        puModalTextGO = puGO.transform.Find("PUPanel/PUText").gameObject;
-
         puGO.SetActive(false);
     }
 

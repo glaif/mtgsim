@@ -25,7 +25,7 @@ public class DeckScript : MonoBehaviour {
         ShuffleDeck();
     }
 
-    private void ShuffleDeck() {
+    public void ShuffleDeck() {
         deck.Shuffle();
 
         gameObject.GetComponentInChildren<TextMesh>().text =
@@ -48,6 +48,7 @@ public class DeckScript : MonoBehaviour {
     }
 
     public void DealCards(int count) {
+        //Debug.Log("DeckSC.DealCards firing");
         if (count < 1) {
             Debug.LogError("Cannot deal less than 1 card");
             DrawFromTopOfDeck();

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MainNetworkScript : Photon.PunBehaviour {
+public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
     public GameObject netPlayerPrefab;
     public GameObject netObjs;
     public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
@@ -10,17 +10,13 @@ public class MainNetworkScript : Photon.PunBehaviour {
 
     public bool MasterClient { get; private set; }
 
-    private string GAME_VERSION = "v0.2";
 
     void Start () {
         PhotonNetwork.logLevel = Loglevel;
-        PhotonNetwork.ConnectUsingSettings(GAME_VERSION);;
+        PhotonNetwork.ConnectUsingSettings(MainGameScript.GameVersion);
     }
-	
-	void Update () {
-		
-	}
 
+    // Events Calls
     public override void OnConnectedToMaster() {
         Debug.Log("Connected to Photon server");
         RoomOptions ro = new RoomOptions();
@@ -37,7 +33,7 @@ public class MainNetworkScript : Photon.PunBehaviour {
             Debug.LogError("Error trying to instantiate a new Network Player GO");
             return;
         }
-        MasterClient = PhotonNetwork.isMasterClient == true;
+        MasterClient = PhotonNetwork.isMasterClient;
         conMessageGO.SetActive(false);
         dsGO.SetActive(true);
     }
@@ -60,5 +56,23 @@ public class MainNetworkScript : Photon.PunBehaviour {
 
     public override void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer) {
         Debug.Log("Player disconnected: " + otherPlayer.NickName);
+    }
+
+    // RPC Calls from IPlayerCom
+    public void SendPrepStart() {
+        photonView.RPC("RPCPrepStart", PhotonTargets.Others, PhotonNetwork.player.NickName, PhotonNetwork.player.ID);
+    }
+
+    public void SendReady() { }
+
+    public void SendStartGame(int cardCount) { }
+
+    // RPC Callbacks
+    [PunRPC]
+    void RPCPrepStart(string senderName, int senderId) {
+        Debug.Log(string.Format("PrepStartGame received by {0} (ID: {1}), sender {2} (ID: {3})",
+                    PhotonNetwork.player.NickName, PhotonNetwork.player.ID, senderName, senderId));
+
+        mgSC.SyncGameState(MainGameScript.GameState.PREPSTART, null);
     }
 }

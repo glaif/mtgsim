@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class MainAIScript : MonoBehaviour {
+public class MainAIScript : MonoBehaviour, IPlayerCom {
     [SerializeField]
     private GameObject aiPlayerPrefab;
 
     [SerializeField]
     private GameObject aiObjs;
 
-    // Use this for initialization
+
     void Start () {
         GameObject aiPlayer = Instantiate(aiPlayerPrefab, aiObjs.transform.position, Quaternion.identity);
         if (aiPlayer == null) {
@@ -20,8 +18,10 @@ public class MainAIScript : MonoBehaviour {
         aiObjs = gameObject;
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
+    // RPC Calls from IPlayerCom
+    public void SendReady() { }
+
+    public void SendPrepStart() { }
+
+    public void SendStartGame(int cardCount) { }
 }
