@@ -1,11 +1,9 @@
 ﻿using System.Collections;
 
 public interface IPlayerCom {
+    void SetNewState(MainGameScript.GameState state);
 
-    void SendReady();
+    bool IsMasterClient();
 
-    void SendPrepStart();
-
-    void SendStartGame(int cardCount);
-
+    void SetOppDeckSize(int cardCount);
 }

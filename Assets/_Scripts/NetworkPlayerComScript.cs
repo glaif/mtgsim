@@ -40,8 +40,6 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour {
                 return;
             }
 
-            //playerSC.NetPlayerSC = this;
-
         } else {
             // If this is a remote network player, set the playerGO & SC
             // to the next available Opponent GO & SC from the Main Game SC
@@ -56,67 +54,16 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour {
                 Debug.LogError("Error null opponentSC SC object");
                 return;
             }
+            opponentSC.DeckName = Deck.OpponentDeckStr;
         }
 
         // If I'm the Master Network Client, set it so in the master game SC
         // and notify the others
-        if ((photonView.isMine == true) && (PhotonNetwork.isMasterClient)) {
-            Debug.Log("Setting master client: " + PhotonNetwork.player.ID);
+        //if ((photonView.isMine == true) && (PhotonNetwork.isMasterClient)) {
+        //    Debug.Log("Setting master client: " + PhotonNetwork.player.ID);
 
-            // Set the master network client locally
-            //mgSC.MasterNetPlayerGO = this.gameObject;
-
-            // Notify the others that I am the master client
-            //photonView.RPC("SetMasterClient", PhotonTargets.OthersBuffered /*, ??? */);
-        }
+        //    // Set the master network client locally
+        //    mgSC.MasterNetPlayerGO = this.gameObject;
+        //}
     }
-
-    //public void SendReady() {
-    //    Debug.Log("Sending ready by " + PhotonNetwork.player.NickName + " (ID: " + PhotonNetwork.player.ID + ")");
-    //    photonView.RPC("Ready", PhotonTargets.OthersBuffered, PhotonNetwork.player.NickName, PhotonNetwork.player.ID);
-    //}
-
-    //public void SendStartGame(int cardCount) {
-    //    Debug.Log("Sending PrepStartGame by " + PhotonNetwork.player.NickName + " (ID: " + PhotonNetwork.player.ID + ")");
-    //    photonView.RPC("PrepStartGame", PhotonTargets.OthersBuffered, cardCount, PhotonNetwork.player.NickName, PhotonNetwork.player.ID);
-    //}
-
-    //[PunRPC]
-    //void Ready(string name, int id) {
-    //    Debug.Log(string.Format("Ready sent by {0} (ID: {1}), received by {2} (ID: {3})", 
-    //            name, id, PhotonNetwork.player.NickName, PhotonNetwork.player.ID));
-    //    if (photonView.isMine == true) {
-    //        mgSC.SigOReady();
-    //    }
-    //}
-
-    //[PunRPC]
-    //void PrepStartGame(int cardCount, string name, int id) {
-    //    if (photonView.isMine == false) {
-    //        Debug.Log(string.Format("PrepStartGame sent by {0} (ID: {1}), received by {2} (ID: {3}), count: {4}", 
-    //                name, id, PhotonNetwork.player.NickName, PhotonNetwork.player.ID, cardCount));
-    //        Debug.Log("photonView.owner: " + photonView.owner);
-
-    //        if (opponentSC == null)
-    //            Debug.LogError("Null opponentSC inside RPC NetworkPlayerComScript::PrepStartGame");
-    //        //opponentSC.StartGame();
-    //    }
-    //}
-
-    //[PunRPC]
-    //void SetMasterClient(/* ??? */) {
-    //    Debug.Log(string.Format("SetMasterClient received by {0} (ID: {1})", PhotonNetwork.player.NickName, PhotonNetwork.player.ID));
-
-    //    if (mgSC == null) {
-    //        Debug.Log(string.Format("mgSC is null for {0} (ID: {1})", PhotonNetwork.player.NickName, PhotonNetwork.player.ID));
-    //        return;
-    //    }
-
-    //    if (mgSC.MasterNetPlayerGO == null) {
-    //        Debug.Log(string.Format("mgSC.MasterNetPlayerGO is null for {0} (ID: {1})", PhotonNetwork.player.NickName, PhotonNetwork.player.ID));
-    //        return;
-    //    }
-
-    //    // mgSC.MasterNetPlayerGO = ???;
-    //}
 }

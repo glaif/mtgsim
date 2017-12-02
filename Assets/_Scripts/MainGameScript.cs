@@ -1,9 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainGameScript : MonoBehaviour {
     public const string GameVersion = "v0.2";
+
+    public const string OppCardCountProp = "CardCount";
 
     private const int StartingHandSize = 7;
 
@@ -14,19 +16,23 @@ public class MainGameScript : MonoBehaviour {
     public PUModalScript popupSC;  // Reference to reusable modal popup window script
     public PlayerScript playerSC;
 
+    // TESTING STUFF
+    public GameObject TestMessageGO;
+
     //public GameObject MasterNetPlayerGO { get; set; }
     public int NumOpponents { get; private set; }
     public IPlayerCom PlayerComSC { get; set; }
 
     // flags
     public bool DeckSelected { get; set; }
+    private bool DeckCountSent = false;
+    //private bool OReadySignalled = false;
 
     [SerializeField]
     private MainNetworkScript netSC;
 
     private Dictionary<string, Opponent> opponentList;
     private int desiredOpponents = 1; // TODO: needs to be set by UI
-    private bool OReadySignalled = false;
     private TransitionData currentState;
     private Dictionary<string, object> stateParams;
 
@@ -39,10 +45,35 @@ public class MainGameScript : MonoBehaviour {
 
     void Update() {
         // The Master Client executes the main game loop & state machine
-        if ((netSC.enabled == false) || (netSC.MasterClient == true)) {
-            // Execute if networking disabled or
-            // if networking enabled and is Master Client
-            MainGameLoop();
+        if (PlayerComSC == null)
+            return;
+
+        //if (PlayerComSC.IsMasterClient() == true) {
+        // Execute if networking disabled or
+        // if networking enabled and is Master Client
+        MainGameLoop();
+        //}
+    }
+
+    public void UpdateOppDeckCount(string playerName, int cardCount) {
+        // Once we recieve the Client deck count at the Master
+        // update the opponent object and signal the Client
+        // to move onto the next state
+        Debug.Log("UpdateOppDeckCount called by: " + playerName + " - Master: " + PlayerComSC.IsMasterClient());
+        UpdateOpponent(playerName, MainGameScript.OppCardCountProp, cardCount);
+        PlayerComSC.SetNewState(GameState.PREPSTART);
+    }
+
+    private void UpdateOpponent(string playerName, string prop, object value) {
+        Opponent opp = opponentList[playerName];
+
+        switch (prop) {
+            case (MainGameScript.OppCardCountProp):
+                opp.deckSize = (int)value;
+                break;
+            default:
+                Debug.LogError("Unknown Oppopnent Prop passed to UpdateOpponent");
+                break;
         }
     }
 
@@ -101,11 +132,17 @@ public class MainGameScript : MonoBehaviour {
         currentState.TransFunc(currentState.Parms);
     }
 
+    private void DisplayState(GameState state) {
+        TestMessageGO.GetComponent<Text>().text = "STATE = " + state.ToString();
+    }
+
     private TransitionData UpdateGameState(GameState state, Dictionary<string, object> newParms) {
         // Turns: untap, upkeep, draw, main, combat, main, discard
         // Adjusts game state and synchronizes with remote player state machine
 
         //Debug.Log("GameState changed to: " + state);
+
+        DisplayState(state); // Testing
 
         TransitionData transData = GetTransition(state);
         if (newParms != null) {
@@ -115,27 +152,48 @@ public class MainGameScript : MonoBehaviour {
     }
 
     private void Join(Dictionary<string, object> parms) {
-        if (NumOpponents == desiredOpponents)
+        if ((PlayerComSC.IsMasterClient()) && (NumOpponents == desiredOpponents)) {
+            // Signal opponents to move to select deck state
+            foreach (KeyValuePair<string, Opponent> opp in opponentList) {
+                PlayerComSC.SetNewState(GameState.SELCTDECK);
+            }
+            // Move to select deck state
             currentState = UpdateGameState(GameState.SELCTDECK, null);
+        }
     }
 
     private void SelectDeck(Dictionary<string, object> parms) {
-        if (DeckSelected)
+        if (!DeckSelected)
+            return;
+
+        // This is set by a Client wafter sending deck count to Master
+        if (DeckCountSent)
+            return;
+
+        if (PlayerComSC.IsMasterClient()) {
+            // Master path
+
+            //foreach (KeyValuePair<string, Opponent> opp in opponentList) {
+            //    PlayerComSC.SetNewState(GameState.PREPSTART);
+            //}
+
             currentState = UpdateGameState(GameState.PREPSTART, null);
+        } else {
+            // Client path
+            PlayerComSC.SetOppDeckSize(playerSC.deckSC.GetDeckCount());
+            DeckCountSent = true;
+        }
     }
 
     private void PrepStart(Dictionary<string, object> parms) {
         playerSC.PrepStartGame();
 
-        foreach (KeyValuePair<string, Opponent> opp in opponentList) {
-            // TODO: Fix this so that we get correct card count from
-            // each opponent - for now set to 60
-            opp.Value.opponentSC.PrepStartGame(60);
+        if (PlayerComSC.IsMasterClient()) {
+            foreach (KeyValuePair<string, Opponent> opp in opponentList) {
+                opp.Value.opponentSC.PrepStartGame(opp.Value.deckSize);
+            }
         }
 
-        if ((netSC.enabled == false) || (netSC.MasterClient == true)) {
-            PlayerComSC.SendPrepStart();
-        }
         currentState = UpdateGameState(GameState.ROLL, null);
     }
 
@@ -191,9 +249,9 @@ public class MainGameScript : MonoBehaviour {
     }
 
     // O_READY
-    public void SigOReady() {
-        OReadySignalled = true;
-    }
+    //public void SigOReady() {
+    //    OReadySignalled = true;
+    //}
 
     private void OReady(Dictionary<string, object> parms) {
         Debug.Log("OReady firing");

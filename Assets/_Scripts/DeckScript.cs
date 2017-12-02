@@ -102,6 +102,10 @@ public class DeckScript : MonoBehaviour {
             string.Format("Cards\nRemaining: {0}", deck.GetDeckCount());
     }
 
+    public int GetDeckCount() {
+        return deck.GetDeckCount();
+    }
+
     public void OnMouseDown() {
         Debug.Log("Clicked on " + this.transform.name + " zone.");
         DrawFromTopOfDeck();

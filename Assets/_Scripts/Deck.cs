@@ -9,12 +9,12 @@ public class Deck {
     private List<Card> deckList = new List<Card>();
 
     public Deck(string deckFile, int cardCount) {
-        //Debug.Log("MTGDeck::Constructor called: deck == " + deckFile);
+        Debug.Log("MTGDeck::Constructor called: deck == " + deckFile);
         LoadDeck(deckFile, cardCount);
     }
 
     void LoadDeck(string deckFile, int cardCount) {
-        //Debug.Log("MTGDeck::LoadDeck called: deckFile == " + deckFile);
+        Debug.Log("MTGDeck::LoadDeck called: deckFile == " + deckFile);
         // Need to read deck from external file
         // Then instantiate and add cards to deck
         // Instantiate prefab for a card when it 
@@ -39,6 +39,8 @@ public class Deck {
     }
 
     private void LoadPlayerDeck(string deckFile) {
+        Debug.Log("MTGDeck::LoadPlayerDeck called: deckFile == " + deckFile);
+
         string deckFilePath = DeckPathStr + deckFile;
         
         StreamReader sr = new StreamReader(deckFilePath);

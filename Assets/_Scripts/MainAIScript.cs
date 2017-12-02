@@ -19,9 +19,15 @@ public class MainAIScript : MonoBehaviour, IPlayerCom {
     }
 
     // RPC Calls from IPlayerCom
-    public void SendReady() { }
+    public bool IsMasterClient() {
+        return true;
+    }
 
-    public void SendPrepStart() { }
+    public void SetNewState(MainGameScript.GameState state) {
 
-    public void SendStartGame(int cardCount) { }
+    }
+
+    public void SetOppDeckSize(int cardCount) {
+
+    }
 }

@@ -51,12 +51,4 @@ public class AIPlayerComScript : MonoBehaviour {
 
         opponentSC.DeckName = Deck.OpponentDeckStr;
     }
-
-    //public void SendReady() {
-    //    Debug.Log("Send ready called in AI Player SC");
-    //}
-
-    //public void SendStartGame(int cardCount) {
-    //    Debug.Log("Send StartGame called in AI Player SC");
-    //}
 }
