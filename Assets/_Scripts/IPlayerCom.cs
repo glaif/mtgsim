@@ -8,6 +8,10 @@ public interface IPlayerCom {
 
     void SetMasterClient();
 
+    void SetPlayerName(string name);
+
+    string GetPlayerName();
+
     void SetNewState(MainGameScript.GameState state);
 
     void SetOppDeckSize(int cardCount);

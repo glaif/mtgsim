@@ -21,7 +21,14 @@ public class MainAIScript : MonoBehaviour, IPlayerCom {
         aiObjs = gameObject;
     }
 
-    // RPC Calls from IPlayerCom
+    // Methods from IPlayerCom
+
+    public void SetPlayerName(string name) { }
+
+    public string GetPlayerName() {
+        return null;
+    }
+
     public bool IsMasterClient() {
         return true;
     }

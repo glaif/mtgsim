@@ -9,6 +9,9 @@ public class MainMenuScript : MonoBehaviour {
     public GameObject conMessageGO;
     public GameObject wfpGO;
     public InputField usernameIF;
+    public InputField serveripIF;
+    public InputField portIF;
+    public Text errorText;
     public MainGameScript mgSC;
     public MainNetworkScript mainNetSC;
     public MainAIScript mainAiSC;
@@ -44,7 +47,8 @@ public class MainMenuScript : MonoBehaviour {
     public void StartLocalGameClick() {
         SetPlayerName();
         mmGO.SetActive(false);
-        EnableLocalPlay();
+        mainAiSC.SetMasterClient();
+        mainAiSC.enabled = true;
         mgSC.PlayerComSC = mainAiSC;
         dsGO.SetActive(true);
     }
@@ -52,20 +56,39 @@ public class MainMenuScript : MonoBehaviour {
     public void StartNetworkHostGameClick() {
         SetPlayerName();
         mmGO.SetActive(false);
-        //conMessageGO.SetActive(true);
-        EnableNetworkPlay();
-        mgSC.PlayerComSC = mainNetSC;
         mainNetSC.SetMasterClient();
+        mainNetSC.enabled = true;
+        mgSC.PlayerComSC = mainNetSC;
+
+        mainNetSC.ConnectToLocalServer();
     }
 
     public void StartNetworkJoinGameClick() {
-        // Not ready for prime time yet
-        // Need to pass in IPADDR of host
-        //SetPlayerName();
-        //mmGO.SetActive(false);
-        //conMessageGO.SetActive(true);
-        //EnableNetworkPlay();
-        //mgSC.PlayerComSC = mainNetSC;
+        SetPlayerName();
+        mmGO.SetActive(false);
+        conMessageGO.SetActive(true);
+        mainNetSC.enabled = true;
+        mgSC.PlayerComSC = mainNetSC;
+
+        string ipaddr = serveripIF.text;
+        string port = portIF.text;
+        if ((ipaddr == null) || (ipaddr == "")) {
+            RaiseErrorAndReset("Please enter a valid host IP address for the game");
+            return;
+        }
+        bool res = mainNetSC.ConnectToServer(ipaddr, port);
+        if (res == false) {
+            RaiseErrorAndReset("Please enter a valid host IP address for the game");
+            return;
+        }
+    }
+
+    private void RaiseErrorAndReset(string text) {
+        conMessageGO.SetActive(false);
+        mainNetSC.enabled = false;
+        mgSC.PlayerComSC = null;
+        errorText.text = text;
+        mmGO.SetActive(true);
     }
 
     public void ImportDeckClick() {
@@ -84,17 +107,7 @@ public class MainMenuScript : MonoBehaviour {
     private void SetPlayerName() {
         // force a trailing space string in case value is an empty 
         // string, else playerName would not be updated.
-        // PhotonNetwork.playerName = usernameIF.text;
+        mainNetSC.SetPlayerName(usernameIF.text);
         PlayerPrefs.SetString(playerNamePrefKey, usernameIF.text);
-    }
-
-    private void EnableLocalPlay() {
-        mainAiSC.SetMasterClient();
-        mainAiSC.enabled = true;
-    }
-
-    private void EnableNetworkPlay() {
-        mainNetSC.SetMasterClient();
-        mainNetSC.enabled = true;
     }
 }

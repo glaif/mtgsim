@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using Grpc.Core;
-using NetworkService;
+using static NetworkService.NetworkService;
 
 public class ComClient {
-	public void ClientConnect() {
-        Channel channel = new Channel("127.0.0.1:50051", ChannelCredentials.Insecure);
+	public void ClientConnect(string ipaddr, string port, string userName) {
+        Channel channel = new Channel(ipaddr + ":" + port, ChannelCredentials.Insecure);
 
-        var client = new NetworkService.NetworkService.NetworkServiceClient(channel);
-        string user = "you";
+        var client = new NetworkServiceClient(channel);
 
-        var reply = client.SayHello(new HelloRequest { Name = user });
+        var reply = client.SayHello(new HelloRequest { Name = userName });
         Debug.Log("Greeting: " + reply.Message);
 
         channel.ShutdownAsync().Wait();

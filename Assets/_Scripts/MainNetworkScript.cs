@@ -2,15 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using System;
 
-public class MainNetworkScript : /* Photon.PunBehaviour */ MonoBehaviour, IPlayerCom {
+public class MainNetworkScript : MonoBehaviour, IPlayerCom {
     private const string GameStateProp = "GameState";
     private const string GameStateParamsProp = "GameStateParams";
     private const string CardCountProp = "CardCount";
 
+    private const string DefaultPort = "50051";
+
+    /* Each client has a ComService.  For the master client
+     * the ComService serves two purposes: (i) act as master
+     * game state machine (for all players), and (ii) 
+     * issue callbacks for this player.  For all other clients
+     * it just issues callbacks to its respective player. */
+
+    /* There are two communication paths: 
+     * 1) ComClient issues RPC to Master ComService.
+     * 2) Master ComService issues RPC callbacks to 
+     * other (non-Master) ComServices.
+     * #2 is utilized to notify state changes so we can avoid 
+     * polling. */
     private bool masterClient = false;
-    private ComService comSrv;
+    private ComService comSvc;
     private ComClient comCli;
+    private string playerName;
+    private string comSvcIPaddr;
+    private string comSvcPort;
 
     public GameObject netPlayerPrefab;
     public GameObject netObjs;
@@ -20,15 +38,40 @@ public class MainNetworkScript : /* Photon.PunBehaviour */ MonoBehaviour, IPlaye
 
 
     void Start () {
-        // PhotonNetwork.ConnectUsingSettings(MainGameScript.GameVersion);
         Debug.Log("Starting main network script: masterClient == " + masterClient);
-        if (masterClient) {
-            comSrv = new ComService();
-            comSrv.StartService();
-        }
-        comCli = new ComClient();
-        comCli.ClientConnect();
     }
+
+    public void ConnectToLocalServer() {
+        ConnectToServer("127.0.0.1", "50051");
+    }
+
+    public bool ConnectToServer(string ipaddr, string port) {
+        this.comSvcIPaddr = ipaddr;
+        this.comSvcPort = DefaultPort;
+        if ((port != null) && (port != "")) {
+            this.comSvcPort = port;
+        }
+
+        if (comSvc == null) {
+            comSvc = new ComService();
+        }
+        if (comSvc.IsRunning() == false) {
+            comSvc.StartService(masterClient, comSvcPort);
+        }
+
+        if (comCli == null) {
+            comCli = new ComClient();
+        }
+        if (((ipaddr == "127.0.0.1") || (ipaddr == "localhost"))
+            && (masterClient == false)) {
+            Debug.Log("Cannot connect to local com service unless you are the host (master) client");
+            return false;
+        }
+        comCli.ClientConnect(ipaddr, comSvcPort, GetPlayerName());
+        return true;
+    }
+
+
 
 
     private void TriggerClientGameStateChange(MainGameScript.GameState state, Dictionary<string, object> parms) {
@@ -85,27 +128,6 @@ public class MainNetworkScript : /* Photon.PunBehaviour */ MonoBehaviour, IPlaye
     // Event Calls
 
 
-
-
-    /* public override void OnConnectedToMaster() {
-        Debug.Log("Connected to Photon server");
-        RoomOptions ro = new RoomOptions();
-        ro.IsVisible = false;
-        ro.MaxPlayers = 2;
-        PhotonNetwork.JoinOrCreateRoom("MTG", ro, TypedLobby.Default);
-    } */
-
-    /* public override void OnJoinedRoom() {
-        Debug.Log("Joined Photon room");
-        GameObject netPlayer = PhotonNetwork.Instantiate(netPlayerPrefab.name, netObjs.transform.position, Quaternion.identity, 0);
-        if (netPlayer == null) {
-            Debug.LogError("Error trying to instantiate a new Network Player GO");
-            return;
-        }
-        conMessageGO.SetActive(false);
-        dsGO.SetActive(true);
-    } */
-
     /* public override void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps) {
         PhotonPlayer player = playerAndUpdatedProps[0] as PhotonPlayer;
         Hashtable changedProps = playerAndUpdatedProps[1] as Hashtable;
@@ -142,28 +164,22 @@ public class MainNetworkScript : /* Photon.PunBehaviour */ MonoBehaviour, IPlaye
         }
     } */
 
-    /* public override void OnDisconnectedFromPhoton() {
-        Debug.Log("Disconnected from Photon server");
-    } */
+    // Methods from IPlayerCom
 
-    /* public override void OnPhotonCreateRoomFailed(object[] codeAndMsg) {
-        Debug.Log("Failed to create room on Photon server");
-    } */
+    public void SetPlayerName(string name) {
+        if ((name == null) || (name == "")) {
+            Debug.Log("Error setting network player name");
+            return;
+        }
+        playerName = name;
+    }
 
-    /* public override void OnPhotonJoinRoomFailed(object[] codeAndMsg) {
-        Debug.Log("Failed to join room on Photon server");
-    } */
-
-    /* public override void OnPhotonPlayerConnected(PhotonPlayer newPlayer) {
-        Debug.Log("Player connected: " + newPlayer.NickName);
-    } */
-
-    /* public override void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer) {
-        Debug.Log("Player disconnected: " + otherPlayer.NickName);
-    } */
-
-
-    // Synchronized Property Change Calls from IPlayerCom
+    public string GetPlayerName() {
+        if (playerName == null) {
+            throw new Exception("Error: Trying to fetch null player name");
+        }
+        return playerName;
+    }
 
     public bool IsMasterClient() {
         return true;

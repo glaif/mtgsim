@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Threading.Tasks;
 using Grpc.Core;
-using NetworkService;
+using static NetworkService.NetworkService;
+using System;
 
 public class ComService {
 
-    class ServiceServer : NetworkService.NetworkService.NetworkServiceBase {
+    class ServiceServer : NetworkServiceBase {
 
         public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context) {
             return Task.FromResult(new HelloReply { Message = "Hello " + request.Name });
@@ -15,13 +16,17 @@ public class ComService {
 
     private const int Port = 50051;
     private Server service = null;
+    private bool running = false;
 
-    public void StartService() {
+    public void StartService(bool isMaster, string port) {
+        int Port = Int32.Parse(port);
+
         service = new Server {
-            Services = { NetworkService.NetworkService.BindService(new ServiceServer()) },
+            Services = { BindService(new ServiceServer()) },
             Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
         };
         service.Start();
+        running = true;
         Debug.Log("ComService server listening on port " + Port);
     }
 
@@ -32,5 +37,9 @@ public class ComService {
             service = null;
         }
         Debug.Log("ComService stopped.");
+    }
+
+    public bool IsRunning() {
+        return running;
     }
 }
