@@ -1,24 +1,33 @@
 ﻿using DictionaryEntry = System.Collections.DictionaryEntry;
 using System.Collections.Generic;
-using ExitGames.Client.Photon;
 using UnityEngine;
+using System.Collections;
 
-public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
+public class MainNetworkScript : /* Photon.PunBehaviour */ MonoBehaviour, IPlayerCom {
     private const string GameStateProp = "GameState";
     private const string GameStateParamsProp = "GameStateParams";
     private const string CardCountProp = "CardCount";
 
+    private bool masterClient = false;
+    private ComService comSrv;
+    private ComClient comCli;
+
     public GameObject netPlayerPrefab;
     public GameObject netObjs;
-    public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
     public GameObject dsGO;
     public GameObject conMessageGO;
     public MainGameScript mgSC;
 
 
     void Start () {
-        PhotonNetwork.logLevel = Loglevel;
-        PhotonNetwork.ConnectUsingSettings(MainGameScript.GameVersion);
+        // PhotonNetwork.ConnectUsingSettings(MainGameScript.GameVersion);
+        Debug.Log("Starting main network script: masterClient == " + masterClient);
+        if (masterClient) {
+            comSrv = new ComService();
+            comSrv.StartService();
+        }
+        comCli = new ComClient();
+        comCli.ClientConnect();
     }
 
 
@@ -28,7 +37,7 @@ public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
         mgSC.SyncGameState(state, parms);
     }
 
-    private void ProcessPropChangedAtClient(PhotonPlayer player, Hashtable changedProps) {
+    private void ProcessPropChangedAtClient(/*PhotonPlayer*/ string player, Hashtable changedProps) {
         // Handle for info sent from Master to Client
         foreach (DictionaryEntry prop in changedProps) {
             string key = prop.Key.ToString();
@@ -52,7 +61,7 @@ public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
         }
     }
 
-    private void ProcessPropChangedAtMaster(PhotonPlayer player, Hashtable changedProps) {
+    private void ProcessPropChangedAtMaster(/* PhotonPlayer */ string player, Hashtable changedProps) {
         // Will use to handle for info sent from Client to Master
         foreach (DictionaryEntry prop in changedProps) {
             string key = prop.Key.ToString();
@@ -62,7 +71,8 @@ public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
             switch (key) {
                 case CardCountProp:
                     int cardCount = (int)prop.Value;
-                    mgSC.UpdateOppDeckCount(player.NickName, cardCount);
+                    //mgSC.UpdateOppDeckCount(player.NickName, cardCount);
+                    mgSC.UpdateOppDeckCount(player, cardCount);
                     break;
                 default:
                     Debug.LogError("Unknown propery change attempted at Master");
@@ -74,16 +84,18 @@ public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
 
     // Event Calls
 
-    public override void OnConnectedToMaster() {
+
+
+
+    /* public override void OnConnectedToMaster() {
         Debug.Log("Connected to Photon server");
         RoomOptions ro = new RoomOptions();
         ro.IsVisible = false;
         ro.MaxPlayers = 2;
         PhotonNetwork.JoinOrCreateRoom("MTG", ro, TypedLobby.Default);
-        /* */
-    }
+    } */
 
-    public override void OnJoinedRoom() {
+    /* public override void OnJoinedRoom() {
         Debug.Log("Joined Photon room");
         GameObject netPlayer = PhotonNetwork.Instantiate(netPlayerPrefab.name, netObjs.transform.position, Quaternion.identity, 0);
         if (netPlayer == null) {
@@ -92,9 +104,9 @@ public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
         }
         conMessageGO.SetActive(false);
         dsGO.SetActive(true);
-    }
+    } */
 
-    public override void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps) {
+    /* public override void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps) {
         PhotonPlayer player = playerAndUpdatedProps[0] as PhotonPlayer;
         Hashtable changedProps = playerAndUpdatedProps[1] as Hashtable;
 
@@ -128,50 +140,44 @@ public class MainNetworkScript : Photon.PunBehaviour, IPlayerCom {
             Debug.Log("Client got Properties Changed Event from Player: " + player.NickName);
             ProcessPropChangedAtClient(player, changedProps);
         }
-    }
+    } */
 
-    public override void OnDisconnectedFromPhoton() {
+    /* public override void OnDisconnectedFromPhoton() {
         Debug.Log("Disconnected from Photon server");
-    }
+    } */
 
-    public override void OnPhotonCreateRoomFailed(object[] codeAndMsg) {
+    /* public override void OnPhotonCreateRoomFailed(object[] codeAndMsg) {
         Debug.Log("Failed to create room on Photon server");
-    }
+    } */
 
-    public override void OnPhotonJoinRoomFailed(object[] codeAndMsg) {
+    /* public override void OnPhotonJoinRoomFailed(object[] codeAndMsg) {
         Debug.Log("Failed to join room on Photon server");
-    }
+    } */
 
-    public override void OnPhotonPlayerConnected(PhotonPlayer newPlayer) {
+    /* public override void OnPhotonPlayerConnected(PhotonPlayer newPlayer) {
         Debug.Log("Player connected: " + newPlayer.NickName);
-    }
+    } */
 
-    public override void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer) {
+    /* public override void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer) {
         Debug.Log("Player disconnected: " + otherPlayer.NickName);
-    }
+    } */
 
 
     // Synchronized Property Change Calls from IPlayerCom
 
     public bool IsMasterClient() {
-        return PhotonNetwork.isMasterClient;
+        return true;
+    }
+
+    public void SetMasterClient() {
+        masterClient = true;
     }
 
     public void SetNewState(MainGameScript.GameState state) {
-        Debug.Log("Master setting game state (" + PhotonNetwork.player.NickName + "): " + state.ToString());
-        Hashtable propsToSet = new Hashtable() {
-            { GameStateProp, state }
-        };
-
-        PhotonNetwork.player.SetCustomProperties(propsToSet);
+        Debug.Log("Master setting game state: " + state.ToString());
     }
 
     public void SetOppDeckSize(int cardCount) {
-        Debug.Log("Client setting opponent deck size (" + PhotonNetwork.player.NickName + "): " + cardCount);
-        Hashtable propsToSet = new Hashtable() {
-            { CardCountProp, cardCount }
-        };
-
-        PhotonNetwork.player.SetCustomProperties(propsToSet);
+        Debug.Log("Client setting opponent deck size: " + cardCount);
     }
 }

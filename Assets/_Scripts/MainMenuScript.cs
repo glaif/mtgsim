@@ -49,12 +49,23 @@ public class MainMenuScript : MonoBehaviour {
         dsGO.SetActive(true);
     }
 
-    public void StartNetworkGameClick() {
+    public void StartNetworkHostGameClick() {
         SetPlayerName();
         mmGO.SetActive(false);
-        conMessageGO.SetActive(true);
+        //conMessageGO.SetActive(true);
         EnableNetworkPlay();
         mgSC.PlayerComSC = mainNetSC;
+        mainNetSC.SetMasterClient();
+    }
+
+    public void StartNetworkJoinGameClick() {
+        // Not ready for prime time yet
+        // Need to pass in IPADDR of host
+        //SetPlayerName();
+        //mmGO.SetActive(false);
+        //conMessageGO.SetActive(true);
+        //EnableNetworkPlay();
+        //mgSC.PlayerComSC = mainNetSC;
     }
 
     public void ImportDeckClick() {
@@ -67,21 +78,23 @@ public class MainMenuScript : MonoBehaviour {
             defaultName = PlayerPrefs.GetString(playerNamePrefKey);
             usernameIF.text = defaultName;
         }
-        PhotonNetwork.playerName = defaultName;
+        // PhotonNetwork.playerName = defaultName;
     }
 
     private void SetPlayerName() {
         // force a trailing space string in case value is an empty 
         // string, else playerName would not be updated.
-        PhotonNetwork.playerName = usernameIF.text;
+        // PhotonNetwork.playerName = usernameIF.text;
         PlayerPrefs.SetString(playerNamePrefKey, usernameIF.text);
     }
 
     private void EnableLocalPlay() {
+        mainAiSC.SetMasterClient();
         mainAiSC.enabled = true;
     }
 
     private void EnableNetworkPlay() {
+        mainNetSC.SetMasterClient();
         mainNetSC.enabled = true;
     }
 }

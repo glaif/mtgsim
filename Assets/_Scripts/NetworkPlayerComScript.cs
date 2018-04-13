@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-public class NetworkPlayerComScript : Photon.MonoBehaviour {
-    public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
+public class NetworkPlayerComScript : MonoBehaviour {
+    // public PhotonLogLevel Loglevel = PhotonLogLevel.Informational;
 
     private MainGameScript mgSC;
 
@@ -13,7 +13,7 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour {
 
 
     void Start() {
-        Debug.Log("Starting NetworkPlayerScript - owner: " + photonView.owner + " isMine: " + photonView.isMine);
+        // Debug.Log("Starting NetworkPlayerScript - owner: " + photonView.owner + " isMine: " + photonView.isMine);
         
         GameObject netObjsGO = GameObject.Find("Network Objects");
         if (netObjsGO == null) {
@@ -31,7 +31,7 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour {
             Debug.LogError("Cannot find Main Game SC");
         }
 
-        if (photonView.isMine == true) {
+        if (/*photonView.isMine ==*/ true) {
             // If this is a local network player, get the playerGO & SC
             // from the Main Game SC
             playerSC = mgSC.playerSC;
@@ -43,7 +43,7 @@ public class NetworkPlayerComScript : Photon.MonoBehaviour {
         } else {
             // If this is a remote network player, set the playerGO & SC
             // to the next available Opponent GO & SC from the Main Game SC
-            opponentGO = mgSC.AddOpponent(PhotonNetwork.player.NickName);
+            // opponentGO = mgSC.AddOpponent(PhotonNetwork.player.NickName);
             Debug.Log("Got opponentGO in NetworkPlayerComScript::start: " + opponentGO.name);
             if (opponentGO == null) {
                 Debug.LogError("Cannot get an available Opponent GO");
