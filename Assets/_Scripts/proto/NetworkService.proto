@@ -1,17 +1,42 @@
-﻿
+﻿// packages\Grpc.Tools.1.11.0-pre2\tools\windows_x64\protoc.exe --csharp_out Assets\_Scripts\proto\genlibs --grpc_out Assets\_Scripts\proto\genlibs Assets\_Scripts\proto\NetworkService.proto --plugin=protoc-gen-grpc=packages\Grpc.Tools.1.11.0-pre2\tools\windows_x64\grpc_csharp_plugin.exe
+
 syntax = "proto3";
+
+package NetworkService;
 
 service NetworkService {
     // Sends a greeting
-    rpc SayHello (HelloRequest) returns (HelloReply) { }
+    rpc PingService (PingRequest) returns (PingReply) { }
+
+	// Initiate joining a game
+	rpc JoinGame (JoinGameRequest) returns (JoinGameReply) { }
+
+}
+
+enum PingReplyStatus {
+	PINGREPLYSTATUS_SUCCESS = 0;
+	PINGREPLYSTATUS_FAILURE = 99;
 }
 
 // The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+message PingRequest {
+	string name = 1;
 }
 
 // The response message containing the greetings
-message HelloReply {
-  string message = 1;
+message PingReply {
+	PingReplyStatus resCode = 1;
+}
+
+enum JoinGameReplyStatus {
+	JOINGAMEREPLYSTATUS_SUCCESS = 0;
+	JOINGAMEREPLYSTATUS_FAILURE = 99;
+}
+
+message JoinGameRequest {
+	string playerName = 1;
+}
+
+message JoinGameReply {
+	JoinGameReplyStatus resCode = 1;
 }

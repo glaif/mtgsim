@@ -38,21 +38,17 @@ public class MainGameScript : MonoBehaviour {
 
 
     void Start() {
+        Debug.Log("MainGameScript started");
         InitializeTransitionArray();
         currentState = UpdateGameState(GameState.JOIN, null);
         DeckSelected = false;
     }
 
     void Update() {
-        // The Master Client executes the main game loop & state machine
+        // Execute the main game loop & state machine
         if (PlayerComSC == null)
             return;
-
-        //if (PlayerComSC.IsMasterClient() == true) {
-        // Execute if networking disabled or
-        // if networking enabled and is Master Client
         MainGameLoop();
-        //}
     }
 
     public void UpdateOppDeckCount(string playerName, int cardCount) {
@@ -72,7 +68,7 @@ public class MainGameScript : MonoBehaviour {
                 opp.deckSize = (int)value;
                 break;
             default:
-                Debug.LogError("Unknown Oppopnent Prop passed to UpdateOpponent");
+                Debug.LogError("Unknown Opponent Prop passed to UpdateOpponent");
                 break;
         }
     }
@@ -152,22 +148,28 @@ public class MainGameScript : MonoBehaviour {
     }
 
     private void Join(Dictionary<string, object> parms) {
-        if ((PlayerComSC.IsMasterClient()) && (NumOpponents == desiredOpponents)) {
-            // Signal opponents to move to select deck state
-            foreach (KeyValuePair<string, Opponent> opp in opponentList) {
-                PlayerComSC.SetNewState(GameState.SELCTDECK);
+        // Initial game state
+        if (PlayerComSC.IsMasterClient()) {
+            // Master path
+            // Matser joins by default without having to send a message
+            // It just waits for opponents to join
+            if (NumOpponents == desiredOpponents) {
+                // Signal opponents to move to select deck state
+                foreach (KeyValuePair<string, Opponent> opp in opponentList) {
+                    PlayerComSC.SetNewState(GameState.SELCTDECK);
+                }
+                // Move to select deck state
+                currentState = UpdateGameState(GameState.SELCTDECK, null);
             }
-            // Move to select deck state
-            currentState = UpdateGameState(GameState.SELCTDECK, null);
+        } else {
+            // Client path
+            // Client sends a message to join a game hosted by another player
+            netSC.JoinGame(null, null);
         }
     }
 
     private void SelectDeck(Dictionary<string, object> parms) {
         if (!DeckSelected)
-            return;
-
-        // This is set by a Client wafter sending deck count to Master
-        if (DeckCountSent)
             return;
 
         if (PlayerComSC.IsMasterClient()) {
@@ -180,6 +182,12 @@ public class MainGameScript : MonoBehaviour {
             currentState = UpdateGameState(GameState.PREPSTART, null);
         } else {
             // Client path
+            // Client sends its deck size to Master
+
+            // This is set by a Client after sending deck count to Master
+            if (DeckCountSent)
+                return;
+
             PlayerComSC.SetOppDeckSize(playerSC.deckSC.GetDeckCount());
             DeckCountSent = true;
         }
@@ -351,7 +359,7 @@ public class MainGameScript : MonoBehaviour {
 
     private TransitionData GetNextTransition(GameState current) {
         GameState cur = current;
-        // Check if we need to wrap around to the beginning os states
+        // Check if we need to wrap around to the beginning of states
         if (cur == GameState.O_DISCARD) {
             cur = GameState.P_UNTAP;
         }
