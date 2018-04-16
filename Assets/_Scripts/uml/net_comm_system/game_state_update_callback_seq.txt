@@ -1,0 +1,11 @@
+﻿@startuml
+
+GameStateMaster -> PubSubService : PublishGameStateUpdate()
+PubSubService -> Subscriber : PublishToClient()
+Subscriber -> CallbackClient : GameStateUpdate()
+CallbackClient -> CallbackService : GameStateUpdate() RPC Request
+CallbackService -> CallbackServiceServer : UpdateClientGameStateView()
+CallbackServiceServer -> MasterNetworkScript : TriggerClientGameStateChange()
+CallbackService -> CallbackClient : GameStateUpdate() RPC Response
+
+@enduml

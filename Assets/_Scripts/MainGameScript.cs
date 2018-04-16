@@ -19,7 +19,6 @@ public class MainGameScript : MonoBehaviour {
     // TESTING STUFF
     public GameObject TestMessageGO;
 
-    //public GameObject MasterNetPlayerGO { get; set; }
     public int NumOpponents { get; private set; }
     public IPlayerCom PlayerComSC { get; set; }
 

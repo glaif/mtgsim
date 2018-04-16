@@ -98,11 +98,11 @@ public class MainNetworkScript : MonoBehaviour, IPlayerCom {
     }
 
 
-    //private void TriggerClientGameStateChange(MainGameScript.GameState state, Dictionary<string, object> parms) {
-    //    // Client received state Change from Master, 
-    //    // so set Client state appropriately
-    //    mgSC.SyncGameState(state, parms);
-    //}
+    public void TriggerClientGameStateChange(MainGameScript.GameState state, Dictionary<string, object> parms) {
+        // Client received state Change from Master, 
+        // so set Client state appropriately
+        mgSC.SyncGameState(state, parms);
+    }
 
     //private void ProcessPropChangedAtClient(/*PhotonPlayer*/ string player, Hashtable changedProps) {
     //    // Handle for info sent from Master to Client

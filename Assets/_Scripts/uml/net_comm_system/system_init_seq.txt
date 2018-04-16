@@ -1,0 +1,38 @@
+﻿@startuml
+
+GameStateMaster -> PubSubService : create new
+PubSubService -> ComServiceServer : create new
+PubSubService -> ComServiceServer : StartService()
+ComServiceServer -> ComService : create new
+ComService -> "Master Client Network" : bind to
+
+ClientNetworkScript -> PubSubClient : create new
+ClientNetworkScript -> CallbackServiceServer : create new
+ClientNetworkScript -> CallbackServiceServer : StartService()
+CallbackServiceServer -> CallbackService : create new
+CallbackService -> "Client Network" : bind to
+
+PubSubClient -> ComClient : create new
+
+ClientNetworkScript -> PubSubClient : ClientConnect()
+PubSubClient -> ComClient : PingService()
+ComClient -> ComService : PingService() RPC request
+ComService -> ComClient : PingService() RPC response
+
+ClientNetworkScript -> PubSubClient : JoinGame() calls Subscribe()
+PubSubClient -> ComClient : Subscribe()
+ComClient -> ComService : Subscribe() RPC request
+ComService -> PubSubService : Subscribe()
+PubSubService -> PubSubService : AddSubscriberToChannel()
+PubSubService -> Subscriber : create new
+Subscriber -> CallbackClient : create new
+PubSubService -> Subscriber : CallbackClientConnect()
+Subscriber -> CallbackClient : PingService()
+CallbackClient -> CallbackService : PingService() RPC request
+CallbackService -> CallbackClient : PingService() RPC response
+Subscriber -> CallbackClient : Subscribe()
+CallbackClient -> CallbackService : Subscribe() RPC request
+CallbackService -> CallbackClient : Subscribe() RPC response
+ComService -> ComClient : Subscribe() RPC response
+
+@enduml

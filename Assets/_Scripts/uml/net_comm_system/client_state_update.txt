@@ -1,0 +1,10 @@
+﻿@startuml
+
+ClientNetworkScript -> PubSubClient : SendClientStateUpdate()
+PubSubClient -> ComClient : ClientStateUpdate()
+ComClient -> ComService : ClientStateUpdate() RPC Request
+ComService -> PubSubService : ProcessClientStateUpdate()
+PubSubService -> GameStateMaster : ProcessClientStateUpdate()
+ComService -> ComClient : ClientStateUpdate() RPC Response
+
+@enduml

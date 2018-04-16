@@ -1,0 +1,88 @@
+﻿@startuml
+
+class Subscriber {
+	- string URI
+	- string playerName
+
+	+ string GetURI()
+	+ string GetPlayerName()
+	+ CallbackClient GetCallbackClient()
+	+ void CallbackClientConnect()
+	+ bool PublishToClient()
+}
+
+Subscriber *-- CallbackClient
+
+class PubSubService {
+	- List<string> clientChannels
+	- Dictionary<string, List<Subscriber>>
+
+	- void AddSubscriberToChannel()
+	+ void CreateChannel()
+	+ bool Subscribe()
+	+ bool Unsubscribe()
+	+ bool PublishGameStateUpdate()
+	+ bool ProcessClientStateUpdate()
+}
+
+GameStateMaster *-- PubSubService
+PubSubService *-- ComServiceServer
+
+ClientNetworkScript *-- PubSubClient
+PubSubClient *-- ComClient
+ClientNetworkScript *-- CallbackServiceServer
+CallbackServiceServer *-- CallbackService
+
+class GameStateMaster {
+	+ bool ProcessClientStateUpdate()
+}
+
+class ClientNetworkScript {
+	+ void JoinGame()
+	+ bool SendDeckSize()
+}
+
+class PubSubClient {
+	+ bool ClientConnect()
+	+ bool Subscribe()
+	+ bool Unsubscribe()
+	+ bool SendClientStateUpdate()
+}
+
+class ComClient {
+	+ //PingReply PingService(PingRequest)//
+	+ //SubscribeReply Subscribe(SubscribeRequest)//
+	+ //ClientStateUpdateReply ClientStateUpdate(ClientStateUpdateRequest)//
+}
+
+class ComServiceServer {
+	+ void StartService()
+	+ void StopService()
+}
+
+class ComService {
+	+ PingReply PingService(PingRequest)
+	+ SubscribeReply Subscribe(SubscribeRequest)
+	+ ClientStateUpdateReply ClientStateUpdate(ClientStateUpdateRequest)
+}
+
+ComServiceServer *-- ComService
+
+
+class CallbackServiceServer {
+	+ void StartService()
+	+ void StopService()
+	+ bool UpdateClientGameStateView()
+}
+
+class CallbackService {
+	+ PingReply PingService(PingRequest)
+	+ GameStateUpdateReply GameStateUpdate(GameStateUpdateRequest)
+}
+
+class CallbackClient {
+	+ //PingReply PingService(PingRequest)//
+	+ //GameStateUpdateReply GameStateUpdate(GameStateUpdateRequest)//
+}
+
+@enduml
