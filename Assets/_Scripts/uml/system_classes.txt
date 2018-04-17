@@ -12,6 +12,7 @@ class Subscriber {
 }
 
 Subscriber *-- CallbackClient
+ComParent <|-- CallbackClient
 
 class PubSubService {
 	- List<string> clientChannels
@@ -25,19 +26,22 @@ class PubSubService {
 	+ bool ProcessClientStateUpdate()
 }
 
-GameStateMaster *-- PubSubService
+GameStateManager *-- PubSubService
 PubSubService *-- ComServiceServer
 
-ClientNetworkScript *-- PubSubClient
+ClientStateManager *-- PubSubClient
 PubSubClient *-- ComClient
-ClientNetworkScript *-- CallbackServiceServer
+ClientStateManager *-- CallbackServiceServer
 CallbackServiceServer *-- CallbackService
+ComServiceParent <|-- CallbackService
+NetworkServiceBase <|-- ComServiceParent
+ComParent <|-- ComClient
 
-class GameStateMaster {
+class GameStateManager {
 	+ bool ProcessClientStateUpdate()
 }
 
-class ClientNetworkScript {
+class ClientStateManager {
 	+ void JoinGame()
 	+ bool SendDeckSize()
 }
@@ -49,10 +53,25 @@ class PubSubClient {
 	+ bool SendClientStateUpdate()
 }
 
-class ComClient {
+note "Implements stubs for RPC calls" as N1
+NetworkServiceClient .. N1
+NetworkServiceClient ..[hidden] N1
+
+class NetworkServiceClient {
+	+ PingReply PingService(PingRequest)
+	+ SubscribeReply Subscribe(SubscribeRequest)
+	+ ClientStateUpdateReply ClientStateUpdate(ClientStateUpdateRequest)
+}
+
+class NetworkServiceBase {
 	+ //PingReply PingService(PingRequest)//
 	+ //SubscribeReply Subscribe(SubscribeRequest)//
 	+ //ClientStateUpdateReply ClientStateUpdate(ClientStateUpdateRequest)//
+}
+
+class ComClient {
+	+ bool Subscribe()
+	+ bool ClientStateUpdate()
 }
 
 class ComServiceServer {
@@ -60,14 +79,18 @@ class ComServiceServer {
 	+ void StopService()
 }
 
+
+note "Implements only those RPC calls supported by the service" as N2
+ComService .. N2
+CallbackService .. N2
+
 class ComService {
-	+ PingReply PingService(PingRequest)
 	+ SubscribeReply Subscribe(SubscribeRequest)
 	+ ClientStateUpdateReply ClientStateUpdate(ClientStateUpdateRequest)
 }
 
 ComServiceServer *-- ComService
-
+ComServiceParent <|-- ComService
 
 class CallbackServiceServer {
 	+ void StartService()
@@ -76,13 +99,21 @@ class CallbackServiceServer {
 }
 
 class CallbackService {
-	+ PingReply PingService(PingRequest)
 	+ GameStateUpdateReply GameStateUpdate(GameStateUpdateRequest)
 }
 
 class CallbackClient {
-	+ //PingReply PingService(PingRequest)//
-	+ //GameStateUpdateReply GameStateUpdate(GameStateUpdateRequest)//
+	+ bool GameStateUpdate()
+}
+
+ComParent *-- NetworkServiceClient
+
+class ComParent {
+	+ bool PingService()
+}
+
+class ComServiceParent {
+	+ PingReply PingService(PingRequest)
 }
 
 @enduml

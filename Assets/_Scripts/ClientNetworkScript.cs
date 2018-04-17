@@ -24,7 +24,7 @@ public class MainNetworkScript : MonoBehaviour, IPlayerCom {
      * #2 is utilized to notify state changes so we can avoid 
      * polling. */
     private bool masterClient = false;
-    private ComService comSvc;
+    private ComServiceServer comSvc;
     private ComClient comCli;
     private string playerName;
     private string comSvcIPaddr;
@@ -54,7 +54,7 @@ public class MainNetworkScript : MonoBehaviour, IPlayerCom {
         }
 
         if (comSvc == null) {
-            comSvc = new ComService();
+            comSvc = new ComServiceServer();
         }
         if (comSvc.IsRunning() == false) {
             comSvc.StartService(masterClient, comSvcPort);
