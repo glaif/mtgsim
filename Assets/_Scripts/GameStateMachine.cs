@@ -38,33 +38,19 @@ public abstract class GameStateMachine : MonoBehaviour {
         return;
     }
 
-    protected abstract void PReady(Dictionary<string, object> parms);
+    protected abstract void Ready(Dictionary<string, object> parms);
 
-    protected abstract void OReady(Dictionary<string, object> parms);
+    protected abstract void Untap(Dictionary<string, object> parms);
 
-    protected abstract void PUntap(Dictionary<string, object> parms);
+    protected abstract void Upkeep(Dictionary<string, object> parms);
 
-    protected abstract void OUntap(Dictionary<string, object> parms);
+    protected abstract void Draw(Dictionary<string, object> parms);
 
-    protected abstract void PUpkeep(Dictionary<string, object> parms);
+    protected abstract void Main(Dictionary<string, object> parms);
 
-    protected abstract void OUpkeep(Dictionary<string, object> parms);
+    protected abstract void Combat(Dictionary<string, object> parms);
 
-    protected abstract void PDraw(Dictionary<string, object> parms);
-
-    protected abstract void ODraw(Dictionary<string, object> parms);
-
-    protected abstract void PMain(Dictionary<string, object> parms);
-
-    protected abstract void OMain(Dictionary<string, object> parms);
-
-    protected abstract void PCombat(Dictionary<string, object> parms);
-
-    protected abstract void OCombat(Dictionary<string, object> parms);
-
-    protected abstract void PDiscard(Dictionary<string, object> parms);
-
-    protected abstract void ODiscard(Dictionary<string, object> parms);
+    protected abstract void Discard(Dictionary<string, object> parms);
 
 
     protected delegate void Transition(Dictionary<string, object> parms);
@@ -79,20 +65,13 @@ public abstract class GameStateMachine : MonoBehaviour {
             new TransitionData(Roll, null),
             new TransitionData(DealCards, null),
             new TransitionData(WaitMulliganResponse, null),
-            new TransitionData(PReady, null),
-            new TransitionData(PUntap, null),
-            new TransitionData(PUpkeep, null),
-            new TransitionData(PDraw, null),
-            new TransitionData(PMain, null),
-            new TransitionData(PCombat, null),
-            new TransitionData(PDiscard, null),
-            new TransitionData(OReady, null),
-            new TransitionData(OUntap, null),
-            new TransitionData(OUpkeep, null),
-            new TransitionData(ODraw, null),
-            new TransitionData(OMain, null),
-            new TransitionData(OCombat, null),
-            new TransitionData(ODiscard, null)
+            new TransitionData(Ready, null),
+            new TransitionData(Untap, null),
+            new TransitionData(Upkeep, null),
+            new TransitionData(Draw, null),
+            new TransitionData(Main, null),
+            new TransitionData(Combat, null),
+            new TransitionData(Discard, null)
         };
     }
 
@@ -103,20 +82,13 @@ public abstract class GameStateMachine : MonoBehaviour {
         ROLL,
         DEAL,
         MULRES,
-        P_READY,
-        P_UNTAP,
-        P_UPKEEP,
-        P_DRAW,
-        P_MAIN,
-        P_COMBAT,
-        P_DISCARD,
-        O_READY,
-        O_UNTAP,
-        O_UPKEEP,
-        O_DRAW,
-        O_MAIN,
-        O_COMBAT,
-        O_DISCARD
+        READY,
+        UNTAP,
+        UPKEEP,
+        DRAW,
+        MAIN,
+        COMBAT,
+        DISCARD
     };
 
     public enum ClientStateTypes {
@@ -124,6 +96,46 @@ public abstract class GameStateMachine : MonoBehaviour {
         CST_MULLIGAN,
         CST_NULL
     };
+
+    protected TransitionData UpdateGameState(GameState state, Dictionary<string, object> newParms) {
+        // Turns: untap, upkeep, draw, main, combat, main, discard
+        // Adjusts game state and synchronizes with remote player state machine
+
+        //Debug.Log("GameState changed to: " + state);
+
+        TransitionData transData = GetTransition(state);
+        if (newParms != null) {
+            transData.Parms = newParms;
+        }
+        return transData;
+    }
+
+    public void SyncGameState(GameState state, Dictionary<string, object> newParms) {
+        currentState = UpdateGameState(state, newParms);
+    }
+
+    protected TransitionData GetTransition(GameState current) {
+        return transitionArray[(int)current];
+    }
+
+    protected TransitionData GetNextTransition(GameState current) {
+        GameState cur = current;
+        // Check if we need to wrap around to the beginning of states
+        if (cur == GameState.DISCARD) {
+            cur = GameState.UNTAP;
+        }
+        return transitionArray[(int)cur];
+    }
+
+    protected class TransitionData {
+        public TransitionData(Transition tf, Dictionary<string, object> p) {
+            TransFunc = tf;
+            Parms = p;
+        }
+
+        public Transition TransFunc { get; set; }
+        public Dictionary<string, object> Parms { get; set; }
+    }
 
     public static string CST2str(ClientStateTypes cst) {
         string res = null;
@@ -155,45 +167,5 @@ public abstract class GameStateMachine : MonoBehaviour {
                 break;
         }
         return res;
-    }
-
-    protected TransitionData UpdateGameState(GameState state, Dictionary<string, object> newParms) {
-        // Turns: untap, upkeep, draw, main, combat, main, discard
-        // Adjusts game state and synchronizes with remote player state machine
-
-        //Debug.Log("GameState changed to: " + state);
-
-        TransitionData transData = GetTransition(state);
-        if (newParms != null) {
-            transData.Parms = newParms;
-        }
-        return transData;
-    }
-
-    public void SyncGameState(GameState state, Dictionary<string, object> newParms) {
-        currentState = UpdateGameState(state, newParms);
-    }
-
-    protected TransitionData GetTransition(GameState current) {
-        return transitionArray[(int)current];
-    }
-
-    protected TransitionData GetNextTransition(GameState current) {
-        GameState cur = current;
-        // Check if we need to wrap around to the beginning of states
-        if (cur == GameState.O_DISCARD) {
-            cur = GameState.P_UNTAP;
-        }
-        return transitionArray[(int)cur];
-    }
-
-    protected class TransitionData {
-        public TransitionData(Transition tf, Dictionary<string, object> p) {
-            TransFunc = tf;
-            Parms = p;
-        }
-
-        public Transition TransFunc { get; set; }
-        public Dictionary<string, object> Parms { get; set; }
     }
 }

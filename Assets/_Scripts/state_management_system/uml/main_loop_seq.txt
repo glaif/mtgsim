@@ -1,0 +1,134 @@
+﻿@startuml
+
+GameStateManager -> CallbackClient : GameStateUpdate(READY)
+CallbackClient -> CallbackServiceServer : READY message
+GameStateManager -> GameStateManager : UpdateGameState(READY)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Ready()
+
+note right
+	Stays in Ready() 
+	until all players
+	signal ready
+end note
+
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Ready()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(READY)
+PubSubClient -> PubSubService : READY message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(READY)
+GameStateManager -> GameStateManager : OnPlayerReady()
+
+note over GameStateManager
+	Once all players are ready. GSM 
+	chooses //player// based on 
+	outcomes of dice rolls.  During a
+	//player's// turn others are called
+	//opponents//.
+end note
+
+== Begin Main Turn Loop ==
+
+GameStateManager -> CallbackClient : GameStateUpdate(UNTAP)
+CallbackClient -> CallbackServiceServer : UNTAP message
+GameStateManager -> GameStateManager : UpdateGameState(UNTAP)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Untap()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Untap()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(UNTAP_DONE)
+PubSubClient -> PubSubService : UNTAP_DONE message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(UNTAP_DONE)
+GameStateManager -> GameStateManager : OnPlayerUntapDone()
+
+GameStateManager -> CallbackClient : GameStateUpdate(UPKEEP)
+CallbackClient -> CallbackServiceServer : UPKEEP message
+GameStateManager -> GameStateManager : UpdateGameState(UPKEEP)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Upkeep()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Upkeep()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(UPKEEP_DONE)
+PubSubClient -> PubSubService : UPKEEP_DONE message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(UPKEEP_DONE)
+GameStateManager -> GameStateManager : OnPlayerUpkeepDone()
+
+GameStateManager -> CallbackClient : GameStateUpdate(DRAW)
+CallbackClient -> CallbackServiceServer : DRAW message
+GameStateManager -> GameStateManager : UpdateGameState(DRAW)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Draw()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Draw()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(DRAW_DONE)
+PubSubClient -> PubSubService : DRAW_DONE message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(DRAW_DONE)
+GameStateManager -> GameStateManager : OnPlayerDawDone()
+
+GameStateManager -> CallbackClient : GameStateUpdate(MAIN)
+CallbackClient -> CallbackServiceServer : MAIN message
+GameStateManager -> GameStateManager : UpdateGameState(MAIN)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Main()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Main()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(MAIN_DONE)
+PubSubClient -> PubSubService : MAIN_DONE message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(MAIN_DONE)
+GameStateManager -> GameStateManager : OnPlayerMainDone()
+
+GameStateManager -> CallbackClient : GameStateUpdate(COMBAT)
+CallbackClient -> CallbackServiceServer : COMBAT message
+GameStateManager -> GameStateManager : UpdateGameState(COMBAT)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Combat()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Combat()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(COMBAT_DONE)
+PubSubClient -> PubSubService : COMBAT_DONE message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(COMBAT_DONE)
+GameStateManager -> GameStateManager : OnPlayerCombatDone()
+
+GameStateManager -> CallbackClient : GameStateUpdate(MAIN)
+CallbackClient -> CallbackServiceServer : MAIN message
+GameStateManager -> GameStateManager : UpdateGameState(MAIN)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Main()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Main()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(MAIN_DONE)
+PubSubClient -> PubSubService : MAIN_DONE message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(MAIN_DONE)
+GameStateManager -> GameStateManager : OnPlayerMainDone()
+
+GameStateManager -> CallbackClient : GameStateUpdate(DISCARD)
+CallbackClient -> CallbackServiceServer : DISCARD message
+GameStateManager -> GameStateManager : UpdateGameState(DISCARD)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Discard()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Discard()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(DISCARD_DONE)
+PubSubClient -> PubSubService : DISCARD_DONE message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(DISCARD_DONE)
+GameStateManager -> GameStateManager : OnPlayerMainDone()
+
+== End Main Turn Loop ==
+
+/' FORMATTING STATEMENTS BELOW '/
+
+skinparam BoxPadding 20
+skinparam SequenceBoxBorderColor black
+box "Host" #LightBlue
+	participant GameStateManager
+	participant PubSubService
+	participant CallbackClient
+end box
+
+box "Client" #LightYellow
+	participant ClientStateManager
+	participant CallbackServiceServer
+	participant PubSubClient
+end box
+
+@enduml

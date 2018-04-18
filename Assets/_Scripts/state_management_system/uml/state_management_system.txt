@@ -1,0 +1,62 @@
+﻿@startuml
+
+class MonoBehaviour {
+	private void start()
+	private void update()
+}
+
+class MainGameScript {
+
+}
+
+MonoBehaviour <|-- MainGameScript
+
+abstract class GameStateMachine {
+	~ TransitionData currentState
+
+	+ void SyncGameState(GameState, Dictionary<string, object>)
+
+	~ void MainGameLoop()
+	~ TransitionData UpdateGameState(GameState, Dictionary<string, object>)
+}
+
+MonoBehaviour <|-- GameStateMachine
+
+
+class GameStateManager {
+	+ bool ProcessClientStateUpdate()
+	+ bool OnPlayerJoin()
+}
+
+class PubSubService {
+	+ bool PublishGameStateUpdate()
+	+ bool ProcessClientStateUpdate()
+}
+
+class CallbackClient {
+	+ bool GameStateUpdate()
+}
+
+GameStateMachine <|-- GameStateManager
+GameStateManager *-- PubSubService
+GameStateManager *-- CallbackClient
+
+
+class ClientStateManager {
+	+ void JoinGame()
+	+ bool SendDeckSize()
+}
+
+class PubSubClient {
+	+ bool SendClientStateUpdate()
+}
+
+class CallbackServiceServer {
+	+ bool UpdateClientGameStateView()
+}
+
+GameStateMachine <|-- ClientStateManager
+ClientStateManager *-- PubSubClient
+ClientStateManager *-- CallbackServiceServer
+
+@enduml

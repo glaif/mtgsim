@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class GameStateManager : GameStateMachine {
 
-    public int NumPlayers { get; private set; }
-
     private PubSubService pss;
     private int desiredPlayers = 2; // TODO: needs to be set by UI
+
+    // Flags & Counters
+    private int numPlayers;
+    private int decksSelected;
 
     void Start () {
         Debug.Log("GameStateManager started");
@@ -21,17 +23,11 @@ public class GameStateManager : GameStateMachine {
         MainGameLoop();
     }
 
-
-    public void PlayerJoined() {
-
-    }
-
-
     protected override void Join(Dictionary<string, object> parms) {
         // Initial game state
 
         // Wait for players to join
-        if (NumPlayers == desiredPlayers) {
+        if (numPlayers == desiredPlayers) {
             // Signal players to move to select deck state
             foreach (KeyValuePair<string, Opponent> opp in opponentList) {
                 PlayerComSC.SetNewState(GameState.SELCTDECK);
@@ -43,10 +39,14 @@ public class GameStateManager : GameStateMachine {
 
     protected override void SelectDeck(Dictionary<string, object> parms) {
         // Wait for all players to select their decks
-        if (!DeckSelected)
+        if (decksSelected == numPlayers)
             return;
 
-            currentState = UpdateGameState(GameState.PREPSTART, null);
+        foreach (KeyValuePair<string, Opponent> opp in opponentList) {
+            PlayerComSC.SetNewState(GameState.PREPSTART);
+        }
+
+        currentState = UpdateGameState(GameState.PREPSTART, null);
     }
 
     protected override void PrepStart(Dictionary<string, object> parms) {
@@ -68,18 +68,14 @@ public class GameStateManager : GameStateMachine {
         // Do the deal cards logic
     }
 
-    protected override void PReady(Dictionary<string, object> parms) {
-        //Debug.Log("PReady firing");
-        //playerSC.SendReady();
-        //currentState = UpdateGameState(GameState.O_READY, null);
-    }
+    // TODO: Need a way to decide who is player and who is opponent for each
+    // turn.  Maybe set a player order based on rolls results, and a turn 
+    // counter per player.  Also need player/opponent abstractions
+    // that I can assign client/subscribers to each round.
 
-    protected override void OReady(Dictionary<string, object> parms) {
-        Debug.Log("OReady firing");
-        // Wait here for other player(s) to move into ready state
-    }
+    protected override void Ready(Dictionary<string, object> parms) { }
 
-    protected override void PUntap(Dictionary<string, object> parms) {
+    protected override void Untap(Dictionary<string, object> parms) {
         Debug.Log("PUntap firing");
         // Untap all tapped cards
         // Keep a tapped cards list in the player script object
@@ -87,25 +83,17 @@ public class GameStateManager : GameStateMachine {
         // Also need to check each card to make sure it should untap
     }
 
-    protected override void OUntap(Dictionary<string, object> parms) { }
+    protected override void Upkeep(Dictionary<string, object> parms) { }
 
-    protected override void PUpkeep(Dictionary<string, object> parms) { }
+    protected override void Draw(Dictionary<string, object> parms) { }
 
-    protected override void OUpkeep(Dictionary<string, object> parms) { }
+    protected override void Main(Dictionary<string, object> parms) { }
 
-    protected override void PDraw(Dictionary<string, object> parms) { }
+    protected override void Combat(Dictionary<string, object> parms) { }
 
-    protected override void ODraw(Dictionary<string, object> parms) { }
+    protected override void Discard(Dictionary<string, object> parms) { }
 
-    protected override void PMain(Dictionary<string, object> parms) { }
+    public void ProcessClientStateUpdate() { }
 
-    protected override void OMain(Dictionary<string, object> parms) { }
-
-    protected override void PCombat(Dictionary<string, object> parms) { }
-
-    protected override void OCombat(Dictionary<string, object> parms) { }
-
-    protected override void PDiscard(Dictionary<string, object> parms) { }
-
-    protected override void ODiscard(Dictionary<string, object> parms) { }
+    public void OnPlayerJoin() { }
 }

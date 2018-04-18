@@ -1,0 +1,124 @@
+﻿@startuml
+
+Unity3D -> GameStateManager : start()
+GameStateManager -> PubSubService : create new
+GameStateManager -> GameStateManager : UpdateGameState(JOIN)
+
+
+Unity3D -> ClientStateManager : start()
+ClientStateManager -> CallbackServiceServer : create new
+ClientStateManager -> ClientStateManager : UpdateGameState(JOIN)
+
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Join()
+
+note right
+	Stays in Join() 
+	until desired number 
+	of players join
+end note
+
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Join()
+ClientStateManager -> ClientStateManager : JoinGame()
+ClientStateManager -> PubSubClient : Subscribe()
+ClientStateManager -> PubSubClient : SendClientStateUpdate(JOIN)
+PubSubClient -> PubSubService : JOIN message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(JOIN)
+GameStateManager -> GameStateManager : OnPlayerJoin()
+
+note over GameStateManager
+	Once desired number
+	of players join
+end note
+
+GameStateManager -> CallbackClient : GameStateUpdate(SELCTDECK)
+CallbackClient -> CallbackServiceServer : SELECTDECK message
+GameStateManager -> GameStateManager : UpdateGameState(SELCTDECK)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : SelectDeck()
+
+note right
+	Stays in SelectDeck() 
+	until all players
+	select their decks
+end note
+
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : SelectDeck()
+
+note right
+	Client stays in 
+	SelectDeck() until 
+	player selects a 
+	deck using GUI
+end note
+
+ClientStateManager -> PubSubClient : SendClientStateUpdate(DECK_SELECTED)
+PubSubClient -> PubSubService : DECK_SELECTED message
+PubSubService -> GameStateManager : ProcessClientStateUpdate(DECK_SELECTED)
+GameStateManager -> GameStateManager : OnPlayerDeckSelected()
+
+note over GameStateManager
+	Once all players
+	select their decks
+end note
+
+GameStateManager -> CallbackClient : GameStateUpdate(PREPSTART)
+CallbackClient -> CallbackServiceServer : PREPSTART message
+GameStateManager -> GameStateManager : UpdateGameState(PREPSTART)
+
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : PrepStart()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : PrepStart()
+GameStateManager -> CallbackClient : GameStateUpdate(ROLL)
+CallbackClient -> CallbackServiceServer : ROLL message
+GameStateManager -> GameStateManager : UpdateGameState(ROLL)
+
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : Roll()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : Roll()
+CallbackClient -> CallbackServiceServer : ROLL_RESULT message
+GameStateManager -> CallbackClient : GameStateUpdate(DEAL)
+CallbackClient -> CallbackServiceServer : DEAL message
+GameStateManager -> GameStateManager : UpdateGameState(DEAL)
+
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : DealCards()
+Unity3D -> ClientStateManager : update()
+ClientStateManager -> ClientStateManager : DealCards()
+GameStateManager -> GameStateManager : UpdateGameState(START_TURN)
+
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : StartTurn()
+
+note right
+	Here GSM decides who is 'player'
+	and who is 'opponent'.
+	Players goes first.
+end note
+
+GameStateManager -> GameStateManager : UpdateGameState(PUNTAP)
+Unity3D -> GameStateManager : update()
+GameStateManager -> GameStateManager : PUntap()
+
+
+/' FORMATTING STATEMENTS BELOW '/
+
+skinparam BoxPadding 20
+skinparam SequenceBoxBorderColor black
+box "Host" #LightBlue
+	participant GameStateManager
+	participant PubSubService
+	participant CallbackClient
+end box
+
+box "Client" #LightYellow
+	participant ClientStateManager
+	participant CallbackServiceServer
+	participant PubSubClient
+end box
+
+@enduml

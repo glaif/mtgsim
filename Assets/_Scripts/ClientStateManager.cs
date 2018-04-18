@@ -58,7 +58,12 @@ public class ClientStateManager : GameStateMachine {
         if (psc == null) {
             psc = new PubSubClient(ipaddr, comSvcPort, GetPlayerName());
         }
-        return psc.ClientConnect();
+
+        connectedToPSS = psc.ClientConnect();
+        if (connectedToPSS == false) {
+            Debug.LogError("Error connecting to PubSubService at Host.");
+        }
+        return connectedToPSS;
     }
 
     private bool JoinGame(string playerName, string clientUri) {
@@ -69,6 +74,8 @@ public class ClientStateManager : GameStateMachine {
             gameJoined = true;
             return true;
         }
+
+        // need to call stateupdate to notify host that you have joined the game
         Debug.LogError("Error: failed to join game.");
         return false;
     }
@@ -144,29 +151,13 @@ public class ClientStateManager : GameStateMachine {
                 // each opponent - for now set to 7
                 opp.Value.opponentSC.DealCards(7);
             }
-            currentState = UpdateGameState(GameState.P_READY, null);
+            currentState = UpdateGameState(GameState.READY, null);
         }
     }
 
-    // P_READY
-    protected override void PReady(Dictionary<string, object> parms) {
-        //Debug.Log("PReady firing");
-        //playerSC.SendReady();
-        //currentState = UpdateGameState(GameState.O_READY, null);
-    }
+    protected override void Ready(Dictionary<string, object> parms) { }
 
-    // O_READY
-    //public void SigOReady() {
-    //    OReadySignalled = true;
-    //}
-
-    protected override void OReady(Dictionary<string, object> parms) {
-        Debug.Log("OReady firing");
-        // Wait here for other player(s) to move into ready state
-    }
-
-    // P_UNTAP
-    protected override void PUntap(Dictionary<string, object> parms) {
+    protected override void Untap(Dictionary<string, object> parms) {
         Debug.Log("PUntap firing");
         // Untap all tapped cards
         // Keep a tapped cards list in the player script object
@@ -174,25 +165,13 @@ public class ClientStateManager : GameStateMachine {
         // Also need to check each card to make sure it should untap
     }
 
-    protected override void OUntap(Dictionary<string, object> parms) { }
+    protected override void Upkeep(Dictionary<string, object> parms) { }
 
-    protected override void PUpkeep(Dictionary<string, object> parms) { }
+    protected override void Draw(Dictionary<string, object> parms) { }
 
-    protected override void OUpkeep(Dictionary<string, object> parms) { }
+    protected override void Main(Dictionary<string, object> parms) { }
 
-    protected override void PDraw(Dictionary<string, object> parms) { }
+    protected override void Combat(Dictionary<string, object> parms) { }
 
-    protected override void ODraw(Dictionary<string, object> parms) { }
-
-    protected override void PMain(Dictionary<string, object> parms) { }
-
-    protected override void OMain(Dictionary<string, object> parms) { }
-
-    protected override void PCombat(Dictionary<string, object> parms) { }
-
-    protected override void OCombat(Dictionary<string, object> parms) { }
-
-    protected override void PDiscard(Dictionary<string, object> parms) { }
-
-    protected override void ODiscard(Dictionary<string, object> parms) { }
+    protected override void Discard(Dictionary<string, object> parms) { }
 }
